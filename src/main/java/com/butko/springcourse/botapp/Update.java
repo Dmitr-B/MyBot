@@ -9,7 +9,7 @@ public class Update {
     @JsonProperty("update_id")
     private Integer update_id;
 
-    @JsonProperty("message_id")
+    @JsonProperty("message")
     private Message message;
 
     @JsonCreator

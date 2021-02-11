@@ -8,9 +8,13 @@ public class Message {
     @JsonProperty("message_id")
     private Integer message_id;
 
+    @JsonProperty("chat")
+    private Chat chat;
+
     @JsonCreator
-    public Message(Integer message_id) {
+    public Message(Integer message_id, Chat chat) {
         this.message_id = message_id;
+        this.chat = chat;
     }
 
     
@@ -20,5 +24,13 @@ public class Message {
 
     public void setMessage_id(Integer message_id) {
         this.message_id = message_id;
+    }
+
+    public Chat getChat() {
+        return chat;
+    }
+
+    public void setChat(Chat chat) {
+        this.chat = chat;
     }
 }

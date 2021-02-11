@@ -1,8 +1,8 @@
 package com.butko.springcourse.botapp.controllers;
 
+import com.butko.springcourse.botapp.Message;
 import com.butko.springcourse.botapp.Update;
 import org.apache.coyote.Response;
-import org.apache.logging.log4j.message.Message;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +17,8 @@ public class BotController {
     @PostMapping()
     public ResponseEntity<String> display(@RequestBody()Update update){
         System.out.println(update.getUpdate_id());
-        //System.out.println(update.getMessage());
-        System.out.println(ResponseEntity.ok().build());
+        System.out.println(update.getMessage().getMessage_id());
+        System.out.println(update.getMessage().getChat().getChat_id());
         return ResponseEntity.ok().build();
     }
 }
