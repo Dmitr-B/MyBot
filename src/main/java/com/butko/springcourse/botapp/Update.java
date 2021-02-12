@@ -34,4 +34,10 @@ public class Update {
         this.update_id = update_id;
     }
 
+    @Override
+    public String toString() {
+        return "Update{" +
+                "message=" + message +
+                '}';
+    }
 }

@@ -11,10 +11,14 @@ public class Message {
     @JsonProperty("chat")
     private Chat chat;
 
+    @JsonProperty("text")
+    private String text;
+
     @JsonCreator
-    public Message(Integer message_id, Chat chat) {
+    public Message(Integer message_id, Chat chat, String text) {
         this.message_id = message_id;
         this.chat = chat;
+        this.text = text;
     }
 
     
@@ -32,5 +36,13 @@ public class Message {
 
     public void setChat(Chat chat) {
         this.chat = chat;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }
