@@ -1,23 +1,11 @@
-package com.butko.springcourse.botapp;
+package com.butko.springcourse.botapp.dto;
 
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Objects;
 
-@PropertySource("classpath:application.properties")
 public class SendMessage {
     private Integer chat_id;
-    //private Message message;
-    private String url = "https://api.telegram.org/bot1663876049:AAFZn9aZfFpFHz39SLBDQcGngEmZVv60xXw/sendMessage"; //"https://api.telegram.org/bot" + getToken() + "/sendMessage";
     private String text;
-    @Value("${sendMessage.token}")
-    private String token;
 
     public SendMessage() {
 
@@ -44,17 +32,6 @@ public class SendMessage {
         this.text = text;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken() {
-        this.token = token;
-    }
 
     @Override
     public boolean equals(Object o) {

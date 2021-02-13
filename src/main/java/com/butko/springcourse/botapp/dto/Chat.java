@@ -1,4 +1,4 @@
-package com.butko.springcourse.botapp;
+package com.butko.springcourse.botapp.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -13,9 +13,5 @@ public class BotAppApplication {
         SpringApplication.run(BotAppApplication.class, args);
     }
 
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
 
 }
