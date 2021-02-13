@@ -2,22 +2,28 @@ package com.butko.springcourse.botapp.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+@Data
 public class Chat {
 
     @JsonProperty("id")
-    private Integer chat_id;
+    private Integer id;
+
+    @JsonProperty("username")
+    private String userName;
+
+    @JsonProperty("first_name")
+    private String firstName;
+
+    @JsonProperty("last_name")
+    private String lastName;
 
     @JsonCreator
-    public Chat(Integer chat_id) {
-        this.chat_id = chat_id;
-    }
-
-    public Integer getChat_id() {
-        return chat_id;
-    }
-
-    public void setChat_id(Integer chat_id) {
-        this.chat_id = chat_id;
+    public Chat(Integer id, String userName, String firstName, String lastName) {
+        this.id = id;
+        this.userName = userName;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 }

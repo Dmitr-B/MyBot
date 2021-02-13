@@ -18,6 +18,7 @@ public class BotController {
 
     @PostMapping
     public ResponseEntity<String> display(@RequestBody Update update) {
+        System.out.println(update);
         botService.handleUpdate(update);
         return ResponseEntity.ok().build();
     }
