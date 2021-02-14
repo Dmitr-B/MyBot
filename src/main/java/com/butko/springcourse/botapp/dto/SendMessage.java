@@ -20,4 +20,11 @@ public class SendMessage {
         this.chatId = chatId;
         this.text = text;
     }
+
+    @Override
+    public String toString() {
+        return "SendMessage{" +
+                "text='" + text + '\'' +
+                '}';
+    }
 }
