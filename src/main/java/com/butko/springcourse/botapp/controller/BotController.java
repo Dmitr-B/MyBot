@@ -2,6 +2,7 @@ package com.butko.springcourse.botapp.controller;
 
 import com.butko.springcourse.botapp.dto.Update;
 import com.butko.springcourse.botapp.service.BotService;
+import com.butko.springcourse.botapp.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -16,10 +17,13 @@ public class BotController {
     @Autowired
     BotService botService;
 
+    @Autowired
+    ChatService chatService;
+
     @PostMapping
     public ResponseEntity<String> display(@RequestBody Update update) {
-        System.out.println(update);
         botService.handleUpdate(update);
+        chatService.sendToDB(update);
         return ResponseEntity.ok().build();
     }
 }

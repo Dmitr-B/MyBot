@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class Message {
     @JsonProperty("message_id")
-    private Integer message_id;
+    private Integer messageId;
 
     @JsonProperty("chat")
     private Chat chat;
@@ -15,11 +15,18 @@ public class Message {
     @JsonProperty("text")
     private String text;
 
+    @JsonProperty("contact")
+    private Contact contact;
+
+    @JsonProperty("from")
+    private User from;
+
     @JsonCreator
-    public Message(Integer message_id, Chat chat, String text) {
-        this.message_id = message_id;
+    public Message(Integer messageId, Chat chat, String text, Contact contact, User from) {
+        this.messageId = messageId;
         this.chat = chat;
         this.text = text;
+        this.contact = contact;
+        this.from = from;
     }
-
 }
