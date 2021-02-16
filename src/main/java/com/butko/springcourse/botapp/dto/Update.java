@@ -13,10 +13,13 @@ public class Update {
     @JsonProperty("message")
     private Message message;
 
+    @JsonProperty("edited_message")
+    private Message editedMessage;
+
     @JsonCreator
-    public Update(Integer updateId, Message message) {
+    public Update(Integer updateId, Message message, Message editedMessage) {
         this.updateId = updateId;
         this.message = message;
+        this.editedMessage = editedMessage;
     }
-
 }

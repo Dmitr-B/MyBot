@@ -21,9 +21,9 @@ public class BotService {
     //private final Chat chat;
 
     public void handleUpdate(Update update) {
-        SendMessage message = new SendMessage(update.getMessage().getChat().getId(), update.getMessage().getText());
-        restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
-                message, SendMessage.class);
+            SendMessage message = new SendMessage(update.getMessage().getChat().getId(), update.getMessage().getText());
+            restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
+                    message, SendMessage.class);
     }
 
 }
