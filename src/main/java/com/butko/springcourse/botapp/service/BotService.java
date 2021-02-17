@@ -26,7 +26,14 @@ public class BotService {
     //private final Chat chat;
 
     public void handleUpdate(Update update) {
-            SendMessage message = new SendMessage(update.getMessage().getChat().getId(), update.getMessage().getText());
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        KeyboardButton button1 = new KeyboardButton();
+        KeyboardButton button2 = new KeyboardButton();
+        button1.setText("Hi");
+        button2.setText("How are you?");
+        KeyboardButton[][] buttons = {{button1,button2}};
+        replyKeyboardMarkup.setKeyboard(buttons);
+            SendMessage message = new SendMessage(update.getMessage().getChat().getId(), update.getMessage().getText(),replyKeyboardMarkup);
             restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
                     message, SendMessage.class);
     }

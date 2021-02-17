@@ -9,7 +9,4 @@ public class KeyboardButton {
     @JsonProperty("text")
     private String text;
 
-    public KeyboardButton(String text) {
-        this.text = text;
-    }
 }

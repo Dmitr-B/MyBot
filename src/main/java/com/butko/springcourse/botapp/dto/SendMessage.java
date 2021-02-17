@@ -14,16 +14,16 @@ public class SendMessage {
     private Integer chatId;
     private String text;
 
-//    @JsonProperty("reply_markup")
-//    private ReplyKeyboardMarkup replyMarkup;
+    @JsonProperty("reply_markup")
+    private ReplyKeyboardMarkup replyMarkup;
 
     @JsonCreator
     public SendMessage(@JsonProperty("chat_id") Integer chatId,
-                       @JsonProperty("text") String text/*,
-                       @JsonProperty("reply_markup") ReplyKeyboardMarkup replyMarkup*/) {
+                       @JsonProperty("text") String text,
+                       @JsonProperty("reply_markup") ReplyKeyboardMarkup replyMarkup) {
         this.chatId = chatId;
         this.text = text;
-        //this.replyMarkup = replyMarkup;
+        this.replyMarkup = replyMarkup;
     }
 
     @Override
