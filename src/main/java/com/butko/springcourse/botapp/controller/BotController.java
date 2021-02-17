@@ -25,10 +25,10 @@ public class BotController {
     @PostMapping
     public ResponseEntity<String> display(@RequestBody Update update) {
         log.info("Input post: " + update);
-        if (update.getMessage() != null) {
+        if (update.hasMessage()) {
             botService.handleUpdate(update);
             chatService.sendToDB(update);
-        } else  if (update.getEditedMessage() != null) {
+        } else if (update.hasEditedMessage()) {
             chatService.updateDB(update);
         }
         return ResponseEntity.ok().build();

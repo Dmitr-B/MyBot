@@ -22,4 +22,16 @@ public class Update {
         this.message = message;
         this.editedMessage = editedMessage;
     }
+
+    public boolean hasMessage() {
+        if (message != null) {
+            return true;
+        } else return false;
+    }
+
+    public boolean hasEditedMessage() {
+        if (editedMessage != null) {
+            return true;
+        } else return false;
+    }
 }
