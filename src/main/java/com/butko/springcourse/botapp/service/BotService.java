@@ -1,10 +1,7 @@
 package com.butko.springcourse.botapp.service;
 
 import com.butko.springcourse.botapp.config.BotConfig;
-import com.butko.springcourse.botapp.dto.KeyboardButton;
-import com.butko.springcourse.botapp.dto.ReplyKeyboardMarkup;
-import com.butko.springcourse.botapp.dto.SendMessage;
-import com.butko.springcourse.botapp.dto.Update;
+import com.butko.springcourse.botapp.dto.*;
 import com.butko.springcourse.botapp.repository.ChatRepository;
 import com.butko.springcourse.botapp.repository.domain.Chat;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +23,23 @@ public class BotService {
     //private final Chat chat;
 
     public void handleUpdate(Update update) {
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        KeyboardButton button1 = new KeyboardButton();
-        KeyboardButton button2 = new KeyboardButton();
-        button1.setText("Hi");
-        button2.setText("How are you?");
-        KeyboardButton[][] buttons = {{button1,button2}};
-        replyKeyboardMarkup.setKeyboard(buttons);
-            SendMessage message = new SendMessage(update.getMessage().getChat().getId(), update.getMessage().getText(),replyKeyboardMarkup);
+//        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+//        KeyboardButton button1 = new KeyboardButton();
+//        KeyboardButton button2 = new KeyboardButton();
+//        button1.setText("Hi");
+//        button2.setText("How are you?");
+//        KeyboardButton[][] buttons = {{button1,button2}};
+//        replyKeyboardMarkup.setKeyboard(buttons);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        InlineKeyboardButton button1 = new InlineKeyboardButton();
+        InlineKeyboardButton button2 = new InlineKeyboardButton();
+        button1.setText("hi");
+        button1.setSwitchInlineQuery("hi");
+        button2.setText("how are you?");
+        button2.setSwitchInlineQuery("how are you?");
+        InlineKeyboardButton[][] buttons = {{button1,button2}};
+        inlineKeyboardMarkup.setInlineKeyboard(buttons);
+            SendMessage message = new SendMessage(update.getMessage().getChat().getId(), update.getMessage().getText(),inlineKeyboardMarkup);
             restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
                     message, SendMessage.class);
     }
