@@ -16,6 +16,9 @@ public class Update {
     @JsonProperty("edited_message")
     private Message editedMessage;
 
+    @JsonProperty("callback_query")
+    private CallbackQuery callbackQuery;
+
     @JsonCreator
     public Update(Integer updateId, Message message, Message editedMessage) {
         this.updateId = updateId;

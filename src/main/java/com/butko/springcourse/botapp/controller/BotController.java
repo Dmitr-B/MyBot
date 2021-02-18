@@ -31,6 +31,9 @@ public class BotController {
         } else if (update.hasEditedMessage()) {
             chatService.updateDB(update);
         }
+        if (update.getCallbackQuery() != null) {
+            botService.updateCallbackQuery(update);
+        }
         return ResponseEntity.ok().build();
     }
 }

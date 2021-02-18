@@ -31,25 +31,30 @@ public class BotService {
 //        KeyboardButton[][] buttons = {{button1,button2}};
 //        replyKeyboardMarkup.setKeyboard(buttons);
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        InlineKeyboardButton button1 = new InlineKeyboardButton();
-        InlineKeyboardButton button2 = new InlineKeyboardButton();
-        button1.setText("hi");
-//        button1.setSwitchInlineQuery("hi");
-        button1.setCallbackData("hi");
-        button2.setText("how are you?");
-        button2.setCallbackData("how are you?");
         List<InlineKeyboardButton> buttons = new ArrayList<>();
-        buttons.add(button1);
-        buttons.add(button2);
+        buttons.add(createInlineButton("hi", "hi"));
+        buttons.add(createInlineButton("how are you?", "how are you?"));
         List<List<InlineKeyboardButton>> buttonList = new ArrayList<>();
         buttonList.add(buttons);
-//        button2.setSwitchInlineQuery("how are you?");
-//        InlineKeyboardButton[][] buttons = {{button1,button2}};
         inlineKeyboardMarkup.setInlineKeyboard(buttonList);
             SendMessage message = new SendMessage(update.getMessage().getChat().getId(), update.getMessage().getText()/*,inlineKeyboardMarkup*/);
             message.setReplyMarkup(inlineKeyboardMarkup);
             restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
                     message, SendMessage.class);
+    }
+
+    public void updateCallbackQuery(Update update) {
+        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(update.getCallbackQuery().getId(),"I`m fine");
+            log.info(answerCallbackQuery);
+            restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/answerCallbackQuery",
+                    answerCallbackQuery,AnswerCallbackQuery.class);
+    }
+
+    private InlineKeyboardButton createInlineButton(String text, String callbackData) {
+        InlineKeyboardButton button = new InlineKeyboardButton();
+        button.setText(text);
+        button.setCallbackData(callbackData);
+        return button;
     }
 
 }
