@@ -22,11 +22,11 @@ public class SendMessage {
 
     @JsonCreator
     public SendMessage(@JsonProperty("chat_id") Integer chatId,
-                       @JsonProperty("text") String text,
-                       @JsonProperty("reply_markup") InlineKeyboardMarkup replyMarkup) {
+                       @JsonProperty("text") String text/*,
+                       @JsonProperty("reply_markup") InlineKeyboardMarkup replyMarkup*/) {
         this.chatId = chatId;
         this.text = text;
-        this.replyMarkup = replyMarkup;
+        //this.replyMarkup = replyMarkup;
     }
 
     @Override

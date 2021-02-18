@@ -34,12 +34,20 @@ public class BotService {
         InlineKeyboardButton button1 = new InlineKeyboardButton();
         InlineKeyboardButton button2 = new InlineKeyboardButton();
         button1.setText("hi");
-        button1.setSwitchInlineQuery("hi");
+//        button1.setSwitchInlineQuery("hi");
+        button1.setCallbackData("hi");
         button2.setText("how are you?");
-        button2.setSwitchInlineQuery("how are you?");
-        InlineKeyboardButton[][] buttons = {{button1,button2}};
-        inlineKeyboardMarkup.setInlineKeyboard(buttons);
-            SendMessage message = new SendMessage(update.getMessage().getChat().getId(), update.getMessage().getText(),inlineKeyboardMarkup);
+        button2.setCallbackData("how are you?");
+        List<InlineKeyboardButton> buttons = new ArrayList<>();
+        buttons.add(button1);
+        buttons.add(button2);
+        List<List<InlineKeyboardButton>> buttonList = new ArrayList<>();
+        buttonList.add(buttons);
+//        button2.setSwitchInlineQuery("how are you?");
+//        InlineKeyboardButton[][] buttons = {{button1,button2}};
+        inlineKeyboardMarkup.setInlineKeyboard(buttonList);
+            SendMessage message = new SendMessage(update.getMessage().getChat().getId(), update.getMessage().getText()/*,inlineKeyboardMarkup*/);
+            message.setReplyMarkup(inlineKeyboardMarkup);
             restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
                     message, SendMessage.class);
     }

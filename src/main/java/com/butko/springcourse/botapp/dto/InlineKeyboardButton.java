@@ -11,4 +11,7 @@ public class InlineKeyboardButton {
 
     @JsonProperty("switch_inline_query")
     private String switchInlineQuery;
+
+    @JsonProperty("callback_data")
+    private String callbackData;
 }
