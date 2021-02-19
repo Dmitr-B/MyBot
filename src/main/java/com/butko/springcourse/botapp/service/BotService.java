@@ -30,6 +30,22 @@ public class BotService {
 //        button2.setText("How are you?");
 //        KeyboardButton[][] buttons = {{button1,button2}};
 //        replyKeyboardMarkup.setKeyboard(buttons);
+        switch (update.getMessage().getText()) {
+            case "Хочу сыграть в игру":
+                InlineKeyboardMarkup gameMarkup = new InlineKeyboardMarkup();
+                List<InlineKeyboardButton> gameButtons = new ArrayList<>();
+                gameButtons.add(createInlineButton("Камень", "Камень"));
+                gameButtons.add(createInlineButton("Ножницы", "Ножницы"));
+                gameButtons.add(createInlineButton("Бумага", "Бумага"));
+                List<List<InlineKeyboardButton>> gameButtonList = new ArrayList<>();
+                gameButtonList.add(gameButtons);
+                gameMarkup.setInlineKeyboard(gameButtonList);
+                SendMessage gameMessage = new SendMessage(update.getMessage().getChat().getId(),"Выбирай свой вариант");
+                gameMessage.setReplyMarkup(gameMarkup);
+                restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
+                        gameMessage,SendMessage.class);
+                break;
+        }
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<InlineKeyboardButton> buttons = new ArrayList<>();
         buttons.add(createInlineButton("hi", "hi"));
