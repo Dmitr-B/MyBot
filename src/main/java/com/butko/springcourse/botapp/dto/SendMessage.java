@@ -8,10 +8,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SendMessage {
+public class SendMessage{
 
     @JsonProperty("chat_id")
     private Integer chatId;
+
+    @JsonProperty("text")
     private String text;
 
     @JsonProperty("reply_markup")
@@ -19,15 +21,19 @@ public class SendMessage {
 
     @JsonCreator
     public SendMessage(@JsonProperty("chat_id") Integer chatId,
-                       @JsonProperty("text") String text) {
+                       @JsonProperty("text") String text,
+                       @JsonProperty("reply_markup") InlineKeyboardMarkup replyMarkup) {
         this.chatId = chatId;
         this.text = text;
+        this.replyMarkup = replyMarkup;
     }
 
     @Override
     public String toString() {
         return "SendMessage{" +
-                "text='" + text + '\'' +
+                "chatId=" + chatId +
+                ", text='" + text + '\'' +
+                ", replyMarkup=" + replyMarkup +
                 '}';
     }
 }

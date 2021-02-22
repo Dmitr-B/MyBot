@@ -2,15 +2,11 @@ package com.butko.springcourse.botapp.service;
 
 import com.butko.springcourse.botapp.config.BotConfig;
 import com.butko.springcourse.botapp.dto.*;
-import com.butko.springcourse.botapp.repository.ChatRepository;
-import com.butko.springcourse.botapp.repository.domain.Chat;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -33,7 +29,7 @@ public class BotService {
 //        button2.setText("How are you?");
 //        KeyboardButton[][] buttons = {{button1,button2}};
 //        replyKeyboardMarkup.setKeyboard(buttons);
-        if (update.getMessage().getText().equals("Хочу сыграть в игру")) {
+        if (update.getMessage().getText().equals("/start")) {
             InlineKeyboardMarkup gameMarkup = new InlineKeyboardMarkup();
             List<InlineKeyboardButton> gameButtons = new ArrayList<>();
             List<InlineKeyboardButton> randomButton = new ArrayList<>();
@@ -45,10 +41,13 @@ public class BotService {
             gameButtonList.add(gameButtons);
             gameButtonList.add(randomButton);
             gameMarkup.setInlineKeyboard(gameButtonList);
-            SendMessage gameMessage = new SendMessage(update.getMessage().getChat().getId(),"Выбирай свой вариант");
+            SendMessage gameMessage = new SendMessage(update.getMessage().getChat().getId(),"Выбирай свой вариант",
+                    gameMarkup);
             gameMessage.setReplyMarkup(gameMarkup);
+            log.info("game " + gameMessage);
             restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
                     gameMessage,SendMessage.class);
+            log.info("upd " + update);
         }
 //        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
 //        List<InlineKeyboardButton> buttons = new ArrayList<>();
@@ -64,25 +63,45 @@ public class BotService {
     }
 
     public void updateCallbackQuery(Update update) {
-        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(update.getCallbackQuery().getId(),"I`m fine");
-            log.info(answerCallbackQuery);
+//        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(update.getCallbackQuery().getId(),"I`m fine");
+//            log.info(answerCallbackQuery);
         if(update.getCallbackQuery()!=null) {
+            log.info("Callback post: " + update.getCallbackQuery());
             switch (update.getCallbackQuery().getData()) {
                 case "Stone":
-                    System.out.println(playGame(update.getCallbackQuery().getData()));
+                    log.info(playGame(update.getCallbackQuery().getData()));
+//                    SendMessage stoneMessage = new SendMessage(update.getCallbackQuery().getMessage().getChat().getId(),
+//                            playGame(update.getCallbackQuery().getData()), null);
+//                    //stoneMessage.setReplyMarkup(null);
+//                    log.info(stoneMessage);
+//                    log.info("Stone " + stoneMessage);
+//                    log.debug(restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
+//                            stoneMessage,SendMessage.class));
+//                    restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
+//                            stoneMessage,SendMessage.class);
                     break;
-                case "Scissors":
-                    System.out.println(playGame(update.getCallbackQuery().getData()));
+                /*case "Scissors":
+                    SendMessage scissorsMessage = new SendMessage(update.getMessage().getChat().getId(), playGame(update.getCallbackQuery().getData()));
+                    //gameMessage.setReplyMarkup(gameMarkup);
+                    restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
+                            scissorsMessage,SendMessage.class);
                     break;
                 case "Paper":
-                    System.out.println(playGame(update.getCallbackQuery().getData()));
+                    SendMessage paperMessage = new SendMessage(update.getMessage().getChat().getId(), playGame(update.getCallbackQuery().getData()));
+                    //gameMessage.setReplyMarkup(gameMarkup);
+                    restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
+                            paperMessage,SendMessage.class);
                     break;
                 case "Random":
-                    System.out.println(playGame(update.getCallbackQuery().getData()));
+                    SendMessage randomMessage = new SendMessage(update.getMessage().getChat().getId(), playGame(update.getCallbackQuery().getData()));
+                    //gameMessage.setReplyMarkup(gameMarkup);
+                    restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
+                            randomMessage,SendMessage.class);
+                    break;*/
             }
         }
-            restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/answerCallbackQuery",
-                    answerCallbackQuery,AnswerCallbackQuery.class);
+//            restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/answerCallbackQuery",
+//                    answerCallbackQuery,AnswerCallbackQuery.class);
     }
 
     private InlineKeyboardButton createInlineButton(String text, String callbackData) {
@@ -114,31 +133,31 @@ public class BotService {
     private String getResult(String data, String random) {
         String result = null;
         if (data.equals("Stone") && random.equals("Stone")){
-            result = "Draw";
+            result = String.format("\u270a" + " vs " + "\u270a" + "%nDraw");
         }
         if (data.equals("Stone") && random.equals("Scissors")){
-            result = "Win user";
+            result = String.format("\u270a" + " vs " + "\u270c\ufe0f" + "%nWin user");
         }
         if (data.equals("Stone") && random.equals("Paper")){
-            result = "Win bot";
+            result = String.format("\u270a" + " vs " + "\ud83e\udd1a" + "%nWin bot");
         }
         if (data.equals("Scissors") && random.equals("Stone")){
-            result = "Win bot";
+            result = String.format("\u270c\ufe0f" + " vs " + "\u270a" + "%nWin bot");
         }
         if (data.equals("Scissors") && random.equals("Scissors")){
-            result = "Draw";
+            result = String.format("\u270c\ufe0f" + " vs " + "\u270c\ufe0f" + "%nDraw");
         }
         if (data.equals("Scissors") && random.equals("Paper")){
-            result = "Win user";
+            result = String.format("\u270c\ufe0f" + " vs " + "\ud83e\udd1a" + "%nWin user");
         }
         if (data.equals("Paper") && random.equals("Stone")){
-            result = "Win user";
+            result = String.format("\ud83e\udd1a" + " vs " + "\u270a" + "%nWin user");
         }
         if (data.equals("Paper") && random.equals("Scissors")){
-            result = "Win bot";
+            result = String.format("\ud83e\udd1a" + " vs " + "\u270c\ufe0f" + "%nWin bot");
         }
         if (data.equals("Paper") && random.equals("Paper")){
-            result = "Draw";
+            result = String.format("\ud83e\udd1a" + " vs " + "\ud83e\udd1a" + "%nDraw");
         }
         return result;
     }
