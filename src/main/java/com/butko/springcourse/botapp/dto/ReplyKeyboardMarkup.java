@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ReplyKeyboardMarkup {
+public class ReplyKeyboardMarkup extends Keyboard{
 
     @JsonProperty("keyboard")
     private KeyboardButton[][] keyboard;

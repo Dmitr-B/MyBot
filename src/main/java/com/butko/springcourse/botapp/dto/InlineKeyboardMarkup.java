@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class InlineKeyboardMarkup {
+public class InlineKeyboardMarkup extends Keyboard{
 
     @JsonProperty("inline_keyboard")
     private List<List<InlineKeyboardButton>> inlineKeyboard;

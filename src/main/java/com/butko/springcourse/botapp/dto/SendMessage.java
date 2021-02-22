@@ -17,12 +17,12 @@ public class SendMessage{
     private String text;
 
     @JsonProperty("reply_markup")
-    private InlineKeyboardMarkup replyMarkup;
+    private Keyboard replyMarkup;
 
     @JsonCreator
     public SendMessage(@JsonProperty("chat_id") Integer chatId,
                        @JsonProperty("text") String text,
-                       @JsonProperty("reply_markup") InlineKeyboardMarkup replyMarkup) {
+                       @JsonProperty("reply_markup") Keyboard replyMarkup) {
         this.chatId = chatId;
         this.text = text;
         this.replyMarkup = replyMarkup;

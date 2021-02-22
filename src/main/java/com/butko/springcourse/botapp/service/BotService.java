@@ -63,45 +63,24 @@ public class BotService {
     }
 
     public void updateCallbackQuery(Update update) {
-//        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(update.getCallbackQuery().getId(),"I`m fine");
-//            log.info(answerCallbackQuery);
+        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(update.getCallbackQuery().getId(),"I`m fine");
+            log.info(answerCallbackQuery);
         if(update.getCallbackQuery()!=null) {
             log.info("Callback post: " + update.getCallbackQuery());
             switch (update.getCallbackQuery().getData()) {
                 case "Stone":
-                    log.info(playGame(update.getCallbackQuery().getData()));
-//                    SendMessage stoneMessage = new SendMessage(update.getCallbackQuery().getMessage().getChat().getId(),
-//                            playGame(update.getCallbackQuery().getData()), null);
-//                    //stoneMessage.setReplyMarkup(null);
-//                    log.info(stoneMessage);
-//                    log.info("Stone " + stoneMessage);
-//                    log.debug(restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
-//                            stoneMessage,SendMessage.class));
-//                    restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
-//                            stoneMessage,SendMessage.class);
-                    break;
-                /*case "Scissors":
-                    SendMessage scissorsMessage = new SendMessage(update.getMessage().getChat().getId(), playGame(update.getCallbackQuery().getData()));
-                    //gameMessage.setReplyMarkup(gameMarkup);
-                    restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
-                            scissorsMessage,SendMessage.class);
-                    break;
+                case "Scissors":
                 case "Paper":
-                    SendMessage paperMessage = new SendMessage(update.getMessage().getChat().getId(), playGame(update.getCallbackQuery().getData()));
-                    //gameMessage.setReplyMarkup(gameMarkup);
-                    restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
-                            paperMessage,SendMessage.class);
-                    break;
                 case "Random":
-                    SendMessage randomMessage = new SendMessage(update.getMessage().getChat().getId(), playGame(update.getCallbackQuery().getData()));
-                    //gameMessage.setReplyMarkup(gameMarkup);
+                    SendMessage gameMessage = new SendMessage(update.getCallbackQuery().getMessage().getChat().getId(),
+                            playGame(update.getCallbackQuery().getData()), new ReplyKeyboardRemove());
                     restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
-                            randomMessage,SendMessage.class);
-                    break;*/
+                            gameMessage,SendMessage.class);
+                break;
             }
         }
-//            restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/answerCallbackQuery",
-//                    answerCallbackQuery,AnswerCallbackQuery.class);
+            restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/answerCallbackQuery",
+                    answerCallbackQuery,AnswerCallbackQuery.class);
     }
 
     private InlineKeyboardButton createInlineButton(String text, String callbackData) {

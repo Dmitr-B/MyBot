@@ -5,7 +5,7 @@ import lombok.Data;
 import org.hibernate.type.TrueFalseType;
 
 @Data
-public class ReplyKeyboardRemove {
+public class ReplyKeyboardRemove extends Keyboard{
 
     @JsonProperty("remove_keyboard")
     private boolean removeKeyboard = true;
