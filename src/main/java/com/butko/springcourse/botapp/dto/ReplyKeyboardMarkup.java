@@ -9,7 +9,7 @@ import java.util.List;
 public class ReplyKeyboardMarkup extends Keyboard{
 
     @JsonProperty("keyboard")
-    private KeyboardButton[][] keyboard;
+    private List<List<KeyboardButton>> keyboard;
 
     @JsonProperty("resize_keyboard")
     private boolean resizeKeyboard;

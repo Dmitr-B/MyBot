@@ -22,14 +22,7 @@ public class BotService {
     //private final Chat chat;
 
     public void handleUpdate(Update update) {
-//        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-//        KeyboardButton button1 = new KeyboardButton();
-//        KeyboardButton button2 = new KeyboardButton();
-//        button1.setText("Hi");
-//        button2.setText("How are you?");
-//        KeyboardButton[][] buttons = {{button1,button2}};
-//        replyKeyboardMarkup.setKeyboard(buttons);
-        if (update.getMessage().getText().equals("/start")) {
+        if (update.getMessage().getText().equals("/start") || update.getMessage().getText().equals("Сыграть еще раз")) {
             InlineKeyboardMarkup gameMarkup = new InlineKeyboardMarkup();
             List<InlineKeyboardButton> gameButtons = new ArrayList<>();
             List<InlineKeyboardButton> randomButton = new ArrayList<>();
@@ -49,17 +42,6 @@ public class BotService {
                     gameMessage,SendMessage.class);
             log.info("upd " + update);
         }
-//        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-//        List<InlineKeyboardButton> buttons = new ArrayList<>();
-//        buttons.add(createInlineButton("hi", "hi"));
-//        buttons.add(createInlineButton("how are you?", "how are you?"));
-//        List<List<InlineKeyboardButton>> buttonList = new ArrayList<>();
-//        buttonList.add(buttons);
-//        inlineKeyboardMarkup.setInlineKeyboard(buttonList);
-//            SendMessage message = new SendMessage(update.getMessage().getChat().getId(), update.getMessage().getText()/*,inlineKeyboardMarkup*/);
-//            message.setReplyMarkup(inlineKeyboardMarkup);
-//            restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
-//                    message, SendMessage.class);
     }
 
     public void updateCallbackQuery(Update update) {
@@ -72,10 +54,18 @@ public class BotService {
                 case "Scissors":
                 case "Paper":
                 case "Random":
-                    SendMessage gameMessage = new SendMessage(update.getCallbackQuery().getMessage().getChat().getId(),
-                            playGame(update.getCallbackQuery().getData()), new ReplyKeyboardRemove());
+                    ReplyKeyboardMarkup answerMarkup = new ReplyKeyboardMarkup();
+                    answerMarkup.setOneTimeKeyboard(true);
+                    answerMarkup.setResizeKeyboard(true);
+                    List<KeyboardButton> answerButtons = new ArrayList<>();
+                    answerButtons.add(createKeyboardButton("Сыграть еще раз"));
+                    List<List<KeyboardButton>> answerButtonList = new ArrayList<>();
+                    answerButtonList.add(answerButtons);
+                    answerMarkup.setKeyboard(answerButtonList);
+                    SendMessage resultMessage = new SendMessage(update.getCallbackQuery().getMessage().getChat().getId(),
+                            playGame(update.getCallbackQuery().getData()), answerMarkup);
                     restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
-                            gameMessage,SendMessage.class);
+                            resultMessage,SendMessage.class);
                 break;
             }
         }
@@ -87,6 +77,12 @@ public class BotService {
         InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText(text);
         button.setCallbackData(callbackData);
+        return button;
+    }
+
+    private KeyboardButton createKeyboardButton(String text) {
+        KeyboardButton button = new KeyboardButton();
+        button.setText(text);
         return button;
     }
 

@@ -3,6 +3,7 @@ package com.butko.springcourse.botapp.controller;
 import com.butko.springcourse.botapp.dto.Update;
 import com.butko.springcourse.botapp.service.BotService;
 import com.butko.springcourse.botapp.service.ChatService;
+import com.butko.springcourse.botapp.service.GameService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,9 @@ public class BotController {
     @Autowired
     ChatService chatService;
 
+    @Autowired
+    GameService gameService;
+
     @PostMapping
     public ResponseEntity<String> display(@RequestBody Update update) {
         log.info("Input post: " + update);
@@ -35,8 +39,9 @@ public class BotController {
         } else if (update.hasEditedMessage()) {
             chatService.updateDB(update);
         }
-        if (update.getCallbackQuery() != null) {
+        if (update.hasCallbackQuery()) {
             botService.updateCallbackQuery(update);
+            gameService.sendStatToDB(update);
         }
         return ResponseEntity.ok().build();
     }

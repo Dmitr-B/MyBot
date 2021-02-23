@@ -20,10 +20,11 @@ public class Update {
     private CallbackQuery callbackQuery;
 
     @JsonCreator
-    public Update(Integer updateId, Message message, Message editedMessage) {
+    public Update(Integer updateId, Message message, Message editedMessage, CallbackQuery callbackQuery) {
         this.updateId = updateId;
         this.message = message;
         this.editedMessage = editedMessage;
+        this.callbackQuery = callbackQuery;
     }
 
     public boolean hasMessage() {
@@ -34,6 +35,12 @@ public class Update {
 
     public boolean hasEditedMessage() {
         if (editedMessage != null) {
+            return true;
+        } else return false;
+    }
+
+    public boolean hasCallbackQuery() {
+        if (callbackQuery != null) {
             return true;
         } else return false;
     }
