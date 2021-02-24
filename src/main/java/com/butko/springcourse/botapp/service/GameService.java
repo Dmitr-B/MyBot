@@ -40,23 +40,23 @@ public class GameService {
     }
 
     public void updateStatInDB(Update update) {
-        switch (botService.resultGame) {
-            case 1:
+        switch (botService.gameResult) {
+            case WON:
                 Game replaceWon = gameRepository.findByChatId(update.getCallbackQuery().getMessage().getChat().getId()).get();
-                replaceWon.setWon(replaceWon.getWon() + 1);
                 log.info("Won " + replaceWon.getWon());
+                replaceWon.setWon(replaceWon.getWon() + 1);
                 gameRepository.save(replaceWon);
                 break;
-            case 2:
+            case DRAW:
                 Game replaceDraw = gameRepository.findByChatId(update.getCallbackQuery().getMessage().getChat().getId()).get();
+                log.info("Draw " + replaceDraw.getDraw());
                 replaceDraw.setDraw(replaceDraw.getDraw() + 1);
-                log.info("Draw " + replaceDraw.getWon());
                 gameRepository.save(replaceDraw);
                 break;
-            case 3:
+            case LOSE:
                 Game replaceLose = gameRepository.findByChatId(update.getCallbackQuery().getMessage().getChat().getId()).get();
+                log.info("Lose " + replaceLose.getLose());
                 replaceLose.setLose(replaceLose.getLose() + 1);
-                log.info("Lose " + replaceLose.getWon());
                 gameRepository.save(replaceLose);
                 break;
         }

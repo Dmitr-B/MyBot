@@ -19,6 +19,7 @@ public class BotService {
     private final RestTemplate restTemplate;
     private final BotConfig botConfig;
     public int resultGame;
+    public GameResult gameResult;
     //private final ChatRepository chatRepository;
     //private final Chat chat;
 
@@ -108,48 +109,48 @@ public class BotService {
 //        GameResult gameResult;
         if (data.equals("Stone") && random.equals("Stone")){
             result = String.format("\u270a" + " vs " + "\u270a" + "%nDraw");
-            //gameResult = GameResult.DRAW;
-            resultGame = 2;
+            gameResult = GameResult.DRAW;
+            //resultGame = 2;
         }
         if (data.equals("Stone") && random.equals("Scissors")){
             result = String.format("\u270a" + " vs " + "\u270c\ufe0f" + "%nWin user");
-            //gameResult = GameResult.WON;
-            resultGame = 1;
+            gameResult = GameResult.WON;
+            //resultGame = 1;
         }
         if (data.equals("Stone") && random.equals("Paper")){
             result = String.format("\u270a" + " vs " + "\ud83e\udd1a" + "%nWin bot");
-            //gameResult = GameResult.LOSE;
-            resultGame = 3;
+            gameResult = GameResult.LOSE;
+            //resultGame = 3;
         }
         if (data.equals("Scissors") && random.equals("Stone")){
             result = String.format("\u270c\ufe0f" + " vs " + "\u270a" + "%nWin bot");
-            //gameResult = GameResult.LOSE;
-            resultGame = 3;
+            gameResult = GameResult.LOSE;
+            //resultGame = 3;
         }
         if (data.equals("Scissors") && random.equals("Scissors")){
             result = String.format("\u270c\ufe0f" + " vs " + "\u270c\ufe0f" + "%nDraw");
-            //gameResult = GameResult.DRAW;
-            resultGame = 2;
+            gameResult = GameResult.DRAW;
+            //resultGame = 2;
         }
         if (data.equals("Scissors") && random.equals("Paper")){
             result = String.format("\u270c\ufe0f" + " vs " + "\ud83e\udd1a" + "%nWin user");
-            //gameResult = GameResult.WON;
-            resultGame = 1;
+            gameResult = GameResult.WON;
+            //resultGame = 1;
         }
         if (data.equals("Paper") && random.equals("Stone")){
             result = String.format("\ud83e\udd1a" + " vs " + "\u270a" + "%nWin user");
-            //gameResult = GameResult.WON;
-            resultGame = 1;
+            gameResult = GameResult.WON;
+            //resultGame = 1;
         }
         if (data.equals("Paper") && random.equals("Scissors")){
             result = String.format("\ud83e\udd1a" + " vs " + "\u270c\ufe0f" + "%nWin bot");
-            //gameResult = GameResult.LOSE;
-            resultGame = 3;
+            gameResult = GameResult.LOSE;
+            //resultGame = 3;
         }
         if (data.equals("Paper") && random.equals("Paper")){
             result = String.format("\ud83e\udd1a" + " vs " + "\ud83e\udd1a" + "%nDraw");
-            //gameResult = GameResult.DRAW;
-            resultGame = 2;
+            gameResult = GameResult.DRAW;
+            //resultGame = 2;
         }
         return result;
     }
