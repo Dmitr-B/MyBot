@@ -15,16 +15,50 @@ import org.springframework.stereotype.Service;
 public class GameService {
 
     private final GameRepository gameRepository;
+    private final BotService botService;
 
     public void sendStatToDB(Update update) {
-        //if (chatRepository.findByChatId(update.getCallbackQuery().getMessage().getChat().getId()).isEmpty()) {
+        if (gameRepository.findByChatId(update.getCallbackQuery().getMessage().getChat().getId()).isEmpty()) {
             Game game = new Game();
             game.setChatId(update.getCallbackQuery().getMessage().getChat().getId());
-//            chat.setFirstName(update.getMessage().getChat().getFirstName());
-//            chat.setLastName(update.getMessage().getChat().getLastName());
-//            chat.setText(update.getMessage().getText());
+            game.setFirstName(update.getCallbackQuery().getFrom().getFirstName());
+            switch (botService.resultGame) {
+                case 1:
+                    game.setWon(1);
+                break;
+                case 2:
+                    game.setDraw(1);
+                break;
+                case 3:
+                    game.setLose(1);
+                break;
+            }
             log.info("Save data to DB: " + game);
             gameRepository.save(game);
-        //} else log.info("ChatId is already defined");
+        } else updateStatInDB(update);
+        log.info("ChatId is already defined");
+    }
+
+    public void updateStatInDB(Update update) {
+        switch (botService.resultGame) {
+            case 1:
+                Game replaceWon = gameRepository.findByChatId(update.getCallbackQuery().getMessage().getChat().getId()).get();
+                replaceWon.setWon(replaceWon.getWon() + 1);
+                log.info("Won " + replaceWon.getWon());
+                gameRepository.save(replaceWon);
+                break;
+            case 2:
+                Game replaceDraw = gameRepository.findByChatId(update.getCallbackQuery().getMessage().getChat().getId()).get();
+                replaceDraw.setDraw(replaceDraw.getDraw() + 1);
+                log.info("Draw " + replaceDraw.getWon());
+                gameRepository.save(replaceDraw);
+                break;
+            case 3:
+                Game replaceLose = gameRepository.findByChatId(update.getCallbackQuery().getMessage().getChat().getId()).get();
+                replaceLose.setLose(replaceLose.getLose() + 1);
+                log.info("Lose " + replaceLose.getWon());
+                gameRepository.save(replaceLose);
+                break;
+        }
     }
 }

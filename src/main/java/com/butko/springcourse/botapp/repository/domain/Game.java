@@ -21,7 +21,7 @@ public class Game {
 
     private String firstName;
 
-    private int win;
+    private int won;
 
     private int draw;
 

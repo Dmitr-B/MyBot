@@ -18,6 +18,7 @@ public class BotService {
 
     private final RestTemplate restTemplate;
     private final BotConfig botConfig;
+    public int resultGame;
     //private final ChatRepository chatRepository;
     //private final Chat chat;
 
@@ -37,10 +38,8 @@ public class BotService {
             SendMessage gameMessage = new SendMessage(update.getMessage().getChat().getId(),"Выбирай свой вариант",
                     gameMarkup);
             gameMessage.setReplyMarkup(gameMarkup);
-            log.info("game " + gameMessage);
             restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
                     gameMessage,SendMessage.class);
-            log.info("upd " + update);
         }
     }
 
@@ -86,19 +85,18 @@ public class BotService {
         return button;
     }
 
-    private String playGame(String data){
+    public String playGame(String data){
         String result = null;
         String[] optionBot = {"Stone","Scissors", "Paper"};
         String[] optionUser = {"Stone","Scissors", "Paper"};
         int indexBot = 0;
-        int indexUser = 0;
+        int indexUser;
         Random randBot = new Random();
         Random randUser = new Random();
         if (data.equals("Stone") || data.equals("Scissors") || data.equals("Paper")) {
             indexBot = randBot.nextInt(3);
             result = getResult(data, optionBot[indexBot]);
-        }
-        if (data.equals("Random")) {
+        } else {
             indexUser = randUser.nextInt(3);
             result = getResult(optionUser[indexUser], optionBot[indexBot]);
         }
@@ -107,32 +105,51 @@ public class BotService {
 
     private String getResult(String data, String random) {
         String result = null;
+//        GameResult gameResult;
         if (data.equals("Stone") && random.equals("Stone")){
             result = String.format("\u270a" + " vs " + "\u270a" + "%nDraw");
+            //gameResult = GameResult.DRAW;
+            resultGame = 2;
         }
         if (data.equals("Stone") && random.equals("Scissors")){
             result = String.format("\u270a" + " vs " + "\u270c\ufe0f" + "%nWin user");
+            //gameResult = GameResult.WON;
+            resultGame = 1;
         }
         if (data.equals("Stone") && random.equals("Paper")){
             result = String.format("\u270a" + " vs " + "\ud83e\udd1a" + "%nWin bot");
+            //gameResult = GameResult.LOSE;
+            resultGame = 3;
         }
         if (data.equals("Scissors") && random.equals("Stone")){
             result = String.format("\u270c\ufe0f" + " vs " + "\u270a" + "%nWin bot");
+            //gameResult = GameResult.LOSE;
+            resultGame = 3;
         }
         if (data.equals("Scissors") && random.equals("Scissors")){
             result = String.format("\u270c\ufe0f" + " vs " + "\u270c\ufe0f" + "%nDraw");
+            //gameResult = GameResult.DRAW;
+            resultGame = 2;
         }
         if (data.equals("Scissors") && random.equals("Paper")){
             result = String.format("\u270c\ufe0f" + " vs " + "\ud83e\udd1a" + "%nWin user");
+            //gameResult = GameResult.WON;
+            resultGame = 1;
         }
         if (data.equals("Paper") && random.equals("Stone")){
             result = String.format("\ud83e\udd1a" + " vs " + "\u270a" + "%nWin user");
+            //gameResult = GameResult.WON;
+            resultGame = 1;
         }
         if (data.equals("Paper") && random.equals("Scissors")){
             result = String.format("\ud83e\udd1a" + " vs " + "\u270c\ufe0f" + "%nWin bot");
+            //gameResult = GameResult.LOSE;
+            resultGame = 3;
         }
         if (data.equals("Paper") && random.equals("Paper")){
             result = String.format("\ud83e\udd1a" + " vs " + "\ud83e\udd1a" + "%nDraw");
+            //gameResult = GameResult.DRAW;
+            resultGame = 2;
         }
         return result;
     }
