@@ -1,7 +1,8 @@
 package com.butko.springcourse.botapp.service;
 
 import com.butko.springcourse.botapp.config.BotConfig;
-import com.butko.springcourse.botapp.dto.*;
+import com.butko.springcourse.botapp.dto.GameResult;
+import com.butko.springcourse.botapp.dto.telegram.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -18,59 +19,69 @@ public class BotService {
 
     private final RestTemplate restTemplate;
     private final BotConfig botConfig;
-    public int resultGame;
-    public GameResult gameResult;
-    //private final ChatRepository chatRepository;
-    //private final Chat chat;
+    private final GameService gameService;
+
+    private List<String> options = List.of("Stone", "Scissors", "Paper");
 
     public void handleUpdate(Update update) {
-        if (update.getMessage().getText().equals("/start") || update.getMessage().getText().equals("Сыграть еще раз")) {
-            InlineKeyboardMarkup gameMarkup = new InlineKeyboardMarkup();
-            List<InlineKeyboardButton> gameButtons = new ArrayList<>();
-            List<InlineKeyboardButton> randomButton = new ArrayList<>();
-            gameButtons.add(createInlineButton("\u270a", "Stone"));
-            gameButtons.add(createInlineButton("\u270c\ufe0f", "Scissors"));
-            gameButtons.add(createInlineButton("\ud83e\udd1a", "Paper"));
-            randomButton.add(createInlineButton("Выбрать случайное значение", "Random"));
-            List<List<InlineKeyboardButton>> gameButtonList = new ArrayList<>();
-            gameButtonList.add(gameButtons);
-            gameButtonList.add(randomButton);
-            gameMarkup.setInlineKeyboard(gameButtonList);
-            SendMessage gameMessage = new SendMessage(update.getMessage().getChat().getId(),"Выбирай свой вариант",
-                    gameMarkup);
-            gameMessage.setReplyMarkup(gameMarkup);
-            restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
-                    gameMessage,SendMessage.class);
+        switch (update.getMessage().getText()) {
+            case "/start":
+            case "Сыграть еще раз":
+                SendMessage choiceMessage = getChoiceMessage(update.getMessage().getChat().getId());
+                restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
+                        choiceMessage, SendMessage.class);
+                break;
         }
     }
 
+    private SendMessage getChoiceMessage(Integer chatId) {
+        InlineKeyboardMarkup gameMarkup = new InlineKeyboardMarkup();
+        List<InlineKeyboardButton> gameButtons = new ArrayList<>();
+        List<InlineKeyboardButton> randomButton = new ArrayList<>();
+        gameButtons.add(createInlineButton("\u270a", "Stone"));
+        gameButtons.add(createInlineButton("\u270c\ufe0f", "Scissors"));
+        gameButtons.add(createInlineButton("\ud83e\udd1a", "Paper"));
+        randomButton.add(createInlineButton("Выбрать случайное значение", "Random"));
+        List<List<InlineKeyboardButton>> gameButtonList = new ArrayList<>();
+        gameButtonList.add(gameButtons);
+        gameButtonList.add(randomButton);
+        gameMarkup.setInlineKeyboard(gameButtonList);
+        SendMessage choiceMessage = new SendMessage(chatId, "Выбирай свой вариант", gameMarkup);
+        choiceMessage.setReplyMarkup(gameMarkup);
+        return choiceMessage;
+    }
+
     public void updateCallbackQuery(Update update) {
-        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(update.getCallbackQuery().getId(),"I`m fine");
-            log.info(answerCallbackQuery);
-        if(update.getCallbackQuery()!=null) {
+        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(
+                update.getCallbackQuery().getId(), "I`m fine");
+        log.info(answerCallbackQuery);
+        if (update.getCallbackQuery() != null) {
             log.info("Callback post: " + update.getCallbackQuery());
-            switch (update.getCallbackQuery().getData()) {
-                case "Stone":
-                case "Scissors":
-                case "Paper":
-                case "Random":
-                    ReplyKeyboardMarkup answerMarkup = new ReplyKeyboardMarkup();
-                    answerMarkup.setOneTimeKeyboard(true);
-                    answerMarkup.setResizeKeyboard(true);
-                    List<KeyboardButton> answerButtons = new ArrayList<>();
-                    answerButtons.add(createKeyboardButton("Сыграть еще раз"));
-                    List<List<KeyboardButton>> answerButtonList = new ArrayList<>();
-                    answerButtonList.add(answerButtons);
-                    answerMarkup.setKeyboard(answerButtonList);
-                    SendMessage resultMessage = new SendMessage(update.getCallbackQuery().getMessage().getChat().getId(),
-                            playGame(update.getCallbackQuery().getData()), answerMarkup);
-                    restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
-                            resultMessage,SendMessage.class);
-                break;
-            }
+            String userChoice = getOption(update.getCallbackQuery().getData());
+            String botChoice = getOption("Random");
+            GameResult gameResult = playGame(userChoice, botChoice);
+            String message = userChoice + " vs " + botChoice + " " + gameResult.toString();
+            gameService.sendStatToDB(gameResult, update.getCallbackQuery().getMessage().getChat().getId());
+
+
+            ReplyKeyboardMarkup answerMarkup = new ReplyKeyboardMarkup();
+            answerMarkup.setOneTimeKeyboard(true);
+            answerMarkup.setResizeKeyboard(true);
+            List<KeyboardButton> answerButtons = new ArrayList<>();
+            answerButtons.add(createKeyboardButton("Сыграть еще раз"));
+            List<List<KeyboardButton>> answerButtonList = new ArrayList<>();
+            answerButtonList.add(answerButtons);
+            answerMarkup.setKeyboard(answerButtonList);
+            SendMessage resultMessage = new SendMessage(
+                    update.getCallbackQuery().getMessage().getChat().getId(),
+                    message, answerMarkup);
+            restTemplate.postForObject(
+                    "https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
+                    resultMessage, SendMessage.class);
         }
-            restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/answerCallbackQuery",
-                    answerCallbackQuery,AnswerCallbackQuery.class);
+        restTemplate.postForObject(
+                "https://api.telegram.org/bot" + botConfig.getToken() + "/answerCallbackQuery",
+                answerCallbackQuery, AnswerCallbackQuery.class);
     }
 
     private InlineKeyboardButton createInlineButton(String text, String callbackData) {
@@ -86,73 +97,45 @@ public class BotService {
         return button;
     }
 
-    public String playGame(String data){
-        String result = null;
-        String[] optionBot = {"Stone","Scissors", "Paper"};
-        String[] optionUser = {"Stone","Scissors", "Paper"};
-        int indexBot = 0;
-        int indexUser;
-        Random randBot = new Random();
-        Random randUser = new Random();
-        if (data.equals("Stone") || data.equals("Scissors") || data.equals("Paper")) {
-            indexBot = randBot.nextInt(3);
-            result = getResult(data, optionBot[indexBot]);
-        } else {
-            indexUser = randUser.nextInt(3);
-            result = getResult(optionUser[indexUser], optionBot[indexBot]);
+    public String getOption(String data) {
+        if (options.contains(data)) {
+            return data;
         }
-        return result;
+        Random random = new Random();
+        return options.get(random.nextInt(3));
     }
 
-    private String getResult(String data, String random) {
-        String result = null;
-//        GameResult gameResult;
-        if (data.equals("Stone") && random.equals("Stone")){
-            result = String.format("\u270a" + " vs " + "\u270a" + "%nDraw");
-            gameResult = GameResult.DRAW;
-            //resultGame = 2;
+    private GameResult playGame(String choice1, String choice2) {
+        //todo можна зробити паттерн State
+        //3 класа наслідуються від абстрактного і реалзують 3 методи stone, scissors, paper і повертають GameResult
+        if (choice1.equals("Stone") && choice2.equals("Stone")) {
+            return GameResult.DRAW;
         }
-        if (data.equals("Stone") && random.equals("Scissors")){
-            result = String.format("\u270a" + " vs " + "\u270c\ufe0f" + "%nWin user");
-            gameResult = GameResult.WON;
-            //resultGame = 1;
+        if (choice1.equals("Stone") && choice2.equals("Scissors")) {
+            return GameResult.WON;
         }
-        if (data.equals("Stone") && random.equals("Paper")){
-            result = String.format("\u270a" + " vs " + "\ud83e\udd1a" + "%nWin bot");
-            gameResult = GameResult.LOSE;
-            //resultGame = 3;
+        if (choice1.equals("Stone") && choice2.equals("Paper")) {
+            return GameResult.LOSE;
         }
-        if (data.equals("Scissors") && random.equals("Stone")){
-            result = String.format("\u270c\ufe0f" + " vs " + "\u270a" + "%nWin bot");
-            gameResult = GameResult.LOSE;
-            //resultGame = 3;
+        if (choice1.equals("Scissors") && choice2.equals("Stone")) {
+            return GameResult.LOSE;
         }
-        if (data.equals("Scissors") && random.equals("Scissors")){
-            result = String.format("\u270c\ufe0f" + " vs " + "\u270c\ufe0f" + "%nDraw");
-            gameResult = GameResult.DRAW;
-            //resultGame = 2;
+        if (choice1.equals("Scissors") && choice2.equals("Scissors")) {
+            return GameResult.DRAW;
         }
-        if (data.equals("Scissors") && random.equals("Paper")){
-            result = String.format("\u270c\ufe0f" + " vs " + "\ud83e\udd1a" + "%nWin user");
-            gameResult = GameResult.WON;
-            //resultGame = 1;
+        if (choice1.equals("Scissors") && choice2.equals("Paper")) {
+            return GameResult.WON;
         }
-        if (data.equals("Paper") && random.equals("Stone")){
-            result = String.format("\ud83e\udd1a" + " vs " + "\u270a" + "%nWin user");
-            gameResult = GameResult.WON;
-            //resultGame = 1;
+        if (choice1.equals("Paper") && choice2.equals("Stone")) {
+            return GameResult.WON;
         }
-        if (data.equals("Paper") && random.equals("Scissors")){
-            result = String.format("\ud83e\udd1a" + " vs " + "\u270c\ufe0f" + "%nWin bot");
-            gameResult = GameResult.LOSE;
-            //resultGame = 3;
+        if (choice1.equals("Paper") && choice2.equals("Scissors")) {
+            return GameResult.LOSE;
         }
-        if (data.equals("Paper") && random.equals("Paper")){
-            result = String.format("\ud83e\udd1a" + " vs " + "\ud83e\udd1a" + "%nDraw");
-            gameResult = GameResult.DRAW;
-            //resultGame = 2;
+        if (choice1.equals("Paper") && choice2.equals("Paper")) {
+            return GameResult.DRAW;
         }
-        return result;
+        return null;
     }
 
 }

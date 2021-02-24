@@ -1,4 +1,4 @@
-package com.butko.springcourse.botapp.dto;
+package com.butko.springcourse.botapp.dto.telegram;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

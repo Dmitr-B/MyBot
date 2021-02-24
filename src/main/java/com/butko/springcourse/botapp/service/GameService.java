@@ -1,9 +1,7 @@
 package com.butko.springcourse.botapp.service;
 
-import com.butko.springcourse.botapp.dto.Update;
-import com.butko.springcourse.botapp.repository.ChatRepository;
+import com.butko.springcourse.botapp.dto.GameResult;
 import com.butko.springcourse.botapp.repository.GameRepository;
-import com.butko.springcourse.botapp.repository.domain.Chat;
 import com.butko.springcourse.botapp.repository.domain.Game;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -15,49 +13,49 @@ import org.springframework.stereotype.Service;
 public class GameService {
 
     private final GameRepository gameRepository;
-    private final BotService botService;
+    //private final BotService botService;
 
-    public void sendStatToDB(Update update) {
-        if (gameRepository.findByChatId(update.getCallbackQuery().getMessage().getChat().getId()).isEmpty()) {
+    public void sendStatToDB(GameResult gameResult, Integer chatId) {
+        if (gameRepository.existsById(Long.valueOf(chatId))) {
             Game game = new Game();
-            game.setChatId(update.getCallbackQuery().getMessage().getChat().getId());
-            game.setFirstName(update.getCallbackQuery().getFrom().getFirstName());
-            switch (botService.resultGame) {
-                case 1:
+            game.setChatId(chatId);
+//            game.setFirstName(update.getCallbackQuery().getFrom().getFirstName());
+            switch (gameResult) {
+                case WON:
                     game.setWon(1);
                 break;
-                case 2:
+                case DRAW:
                     game.setDraw(1);
                 break;
-                case 3:
+                case LOSE:
                     game.setLose(1);
                 break;
             }
             log.info("Save data to DB: " + game);
             gameRepository.save(game);
-        } else updateStatInDB(update);
+        } else updateStatInDB(gameResult, chatId);
         log.info("ChatId is already defined");
     }
 
-    public void updateStatInDB(Update update) {
-        switch (botService.gameResult) {
+    public void updateStatInDB(GameResult gameResult, Integer chatId) {
+        Game replaceResult = gameRepository.findByChatId(chatId).get();
+        switch (gameResult) {
             case WON:
-                Game replaceWon = gameRepository.findByChatId(update.getCallbackQuery().getMessage().getChat().getId()).get();
-                log.info("Won " + replaceWon.getWon());
-                replaceWon.setWon(replaceWon.getWon() + 1);
-                gameRepository.save(replaceWon);
+                //log.info("Won " + replaceWon.getWon());
+                replaceResult.setWon(replaceResult.getWon() + 1);
+                gameRepository.save(replaceResult);
                 break;
             case DRAW:
-                Game replaceDraw = gameRepository.findByChatId(update.getCallbackQuery().getMessage().getChat().getId()).get();
-                log.info("Draw " + replaceDraw.getDraw());
-                replaceDraw.setDraw(replaceDraw.getDraw() + 1);
-                gameRepository.save(replaceDraw);
+                //Game replaceDraw = gameRepository.findByChatId(update.getCallbackQuery().getMessage().getChat().getId()).get();
+                //log.info("Draw " + replaceDraw.getDraw());
+                replaceResult.setDraw(replaceResult.getDraw() + 1);
+                gameRepository.save(replaceResult);
                 break;
             case LOSE:
-                Game replaceLose = gameRepository.findByChatId(update.getCallbackQuery().getMessage().getChat().getId()).get();
-                log.info("Lose " + replaceLose.getLose());
-                replaceLose.setLose(replaceLose.getLose() + 1);
-                gameRepository.save(replaceLose);
+                //Game replaceLose = gameRepository.findByChatId(update.getCallbackQuery().getMessage().getChat().getId()).get();
+                //log.info("Lose " + replaceLose.getLose());
+                replaceResult.setLose(replaceResult.getLose() + 1);
+                gameRepository.save(replaceResult);
                 break;
         }
     }

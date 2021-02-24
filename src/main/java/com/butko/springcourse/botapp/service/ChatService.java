@@ -1,6 +1,6 @@
 package com.butko.springcourse.botapp.service;
 
-import com.butko.springcourse.botapp.dto.Update;
+import com.butko.springcourse.botapp.dto.telegram.Update;
 import com.butko.springcourse.botapp.repository.ChatRepository;
 import com.butko.springcourse.botapp.repository.domain.Chat;
 import lombok.RequiredArgsConstructor;
