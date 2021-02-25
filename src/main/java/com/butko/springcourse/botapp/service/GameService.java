@@ -44,7 +44,7 @@ public class GameService {
         switch (gameResult) {
             case WON:
                 replaceResult.setWon(replaceResult.getWon() + 1);
-                gameRepository.save(replaceResult);
+                gameRepository.save(replaceResult);//save повторюється
                 break;
             case DRAW:
                 replaceResult.setDraw(replaceResult.getDraw() + 1);
@@ -58,10 +58,8 @@ public class GameService {
     }
 
     public String showStat(Integer chatId) {
-        String stat = null;
         Game showResult = gameRepository.findByChatId((chatId)).get();
-        stat = String.format("Пользователь: " + showResult.getFirstName() + "%nПобеды: "
+        return String.format("Пользователь: " + showResult.getFirstName() + "%nПобеды: "
         + showResult.getWon() + "%nНичьи: " + showResult.getDraw() + "%nПоражения: " + showResult.getLose());
-        return stat;
     }
 }
