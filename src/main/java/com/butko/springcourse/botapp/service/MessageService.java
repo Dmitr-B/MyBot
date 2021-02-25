@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 @Log4j2
 public class MessageService {
 
-    private final BotConfig botConfig;
-
     public SendMessage sendMessage(Integer id, String text, Keyboard keyboard){
         return new SendMessage(id, text, keyboard);
     }

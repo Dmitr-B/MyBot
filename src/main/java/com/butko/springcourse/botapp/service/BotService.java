@@ -32,6 +32,12 @@ public class BotService {
                 restTemplate.postForObject(botConfig.getDomain() + botConfig.getToken() + "/sendMessage",
                         choiceMessage, SendMessage.class);
                 break;
+            case "Статистика":
+                SendMessage statMessage = messageService.sendMessage(update.getMessage().getChat().getId(),
+                        gameService.showStat(update.getMessage().getChat().getId()),createReplyMarkup());
+                restTemplate.postForObject(botConfig.getDomain() + botConfig.getToken() + "/sendMessage",
+                        statMessage, SendMessage.class);
+                break;
         }
     }
 
@@ -61,19 +67,12 @@ public class BotService {
             String botChoice = getOption("Random");
             GameResult gameResult = playGame(userChoice, botChoice);
             String message = userChoice + " vs " + botChoice + " " + gameResult.toString();
-            gameService.sendStatToDB(gameResult, update.getCallbackQuery().getMessage().getChat().getId());
+            gameService.sendStatToDB(gameResult, update.getCallbackQuery().getMessage().getChat().getId(),
+                    update.getCallbackQuery().getMessage().getChat().getFirstName());
 
 
-            ReplyKeyboardMarkup answerMarkup = new ReplyKeyboardMarkup();
-            answerMarkup.setOneTimeKeyboard(true);
-            answerMarkup.setResizeKeyboard(true);
-            List<KeyboardButton> answerButtons = new ArrayList<>();
-            answerButtons.add(createKeyboardButton("Сыграть еще раз"));
-            List<List<KeyboardButton>> answerButtonList = new ArrayList<>();
-            answerButtonList.add(answerButtons);
-            answerMarkup.setKeyboard(answerButtonList);
             SendMessage resultMessage = messageService.sendMessage(update.getCallbackQuery().getMessage().getChat().getId(),
-                    message, answerMarkup);
+                    message, createReplyMarkup());
             restTemplate.postForObject(
                     botConfig.getDomain() + botConfig.getToken() + "/sendMessage",
                     resultMessage, SendMessage.class);
@@ -94,6 +93,19 @@ public class BotService {
         KeyboardButton button = new KeyboardButton();
         button.setText(text);
         return button;
+    }
+
+    private ReplyKeyboardMarkup createReplyMarkup() {
+        ReplyKeyboardMarkup answerMarkup = new ReplyKeyboardMarkup();
+        answerMarkup.setOneTimeKeyboard(true);
+        answerMarkup.setResizeKeyboard(true);
+        List<KeyboardButton> answerButtons = new ArrayList<>();
+        answerButtons.add(createKeyboardButton("Сыграть еще раз"));
+        answerButtons.add(createKeyboardButton("Статистика"));
+        List<List<KeyboardButton>> answerButtonList = new ArrayList<>();
+        answerButtonList.add(answerButtons);
+        answerMarkup.setKeyboard(answerButtonList);
+        return answerMarkup;
     }
 
     public String getOption(String data) {
