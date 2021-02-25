@@ -20,6 +20,7 @@ public class BotService {
     private final RestTemplate restTemplate;
     private final BotConfig botConfig;
     private final GameService gameService;
+    private final MessageService messageService;
 
     private List<String> options = List.of("Stone", "Scissors", "Paper");
 
@@ -28,7 +29,7 @@ public class BotService {
             case "/start":
             case "Сыграть еще раз":
                 SendMessage choiceMessage = getChoiceMessage(update.getMessage().getChat().getId());
-                restTemplate.postForObject("https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
+                restTemplate.postForObject(botConfig.getDomain() + botConfig.getToken() + "/sendMessage",
                         choiceMessage, SendMessage.class);
                 break;
         }
@@ -46,14 +47,13 @@ public class BotService {
         gameButtonList.add(gameButtons);
         gameButtonList.add(randomButton);
         gameMarkup.setInlineKeyboard(gameButtonList);
-        SendMessage choiceMessage = new SendMessage(chatId, "Выбирай свой вариант", gameMarkup);
-        choiceMessage.setReplyMarkup(gameMarkup);
+        SendMessage choiceMessage = messageService.sendMessage(chatId, "Выбирай свой вариант", gameMarkup);
         return choiceMessage;
     }
 
     public void updateCallbackQuery(Update update) {
-        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(
-                update.getCallbackQuery().getId(), "I`m fine");
+        AnswerCallbackQuery answerCallbackQuery = messageService.answerCallbackQuery(update.getCallbackQuery().getId(),
+                update.getCallbackQuery().getData());
         log.info(answerCallbackQuery);
         if (update.getCallbackQuery() != null) {
             log.info("Callback post: " + update.getCallbackQuery());
@@ -72,15 +72,14 @@ public class BotService {
             List<List<KeyboardButton>> answerButtonList = new ArrayList<>();
             answerButtonList.add(answerButtons);
             answerMarkup.setKeyboard(answerButtonList);
-            SendMessage resultMessage = new SendMessage(
-                    update.getCallbackQuery().getMessage().getChat().getId(),
+            SendMessage resultMessage = messageService.sendMessage(update.getCallbackQuery().getMessage().getChat().getId(),
                     message, answerMarkup);
             restTemplate.postForObject(
-                    "https://api.telegram.org/bot" + botConfig.getToken() + "/sendMessage",
+                    botConfig.getDomain() + botConfig.getToken() + "/sendMessage",
                     resultMessage, SendMessage.class);
         }
         restTemplate.postForObject(
-                "https://api.telegram.org/bot" + botConfig.getToken() + "/answerCallbackQuery",
+                botConfig.getDomain() + botConfig.getToken() + "/answerCallbackQuery",
                 answerCallbackQuery, AnswerCallbackQuery.class);
     }
 
