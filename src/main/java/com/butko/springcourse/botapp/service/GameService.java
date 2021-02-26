@@ -56,14 +56,14 @@ public class GameService {
         Game showResult = gameRepository.findByChatId((chatId)).get();
         StringBuilder result = new StringBuilder("Пользователь: ");
         result.append(showResult.getFirstName());
-        result.append("%nПобеды: ");
+        result.append("\nПобеды: ");
         result.append(showResult.getWon());
-        result.append("%nНичьи: ");
+        result.append("\nНичьи: ");
         result.append(showResult.getDraw());
-        result.append("%nПоражения: ");
+        result.append("\nПоражения: ");
         result.append(showResult.getLose());
         /*return String.format("Пользователь: " + showResult.getFirstName() + "%nПобеды: "
         + showResult.getWon() + "%nНичьи: " + showResult.getDraw() + "%nПоражения: " + showResult.getLose());*/
-        return String.format(result.toString());
+        return result.toString();
     }
 }

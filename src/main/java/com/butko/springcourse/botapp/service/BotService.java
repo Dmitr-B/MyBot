@@ -80,6 +80,7 @@ public class BotService {
             /*SendMessage resultMessage = */
             messageService.sendMessage(update.getCallbackQuery().getMessage().getChat().getId(),
                     message, createReplyMarkup());
+
             messageService.answerCallbackQuery(update.getCallbackQuery().getId(),
                     update.getCallbackQuery().getData());
 /*            restTemplate.postForObject(

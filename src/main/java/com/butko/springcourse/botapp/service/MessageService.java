@@ -15,10 +15,9 @@ import org.springframework.web.client.RestTemplate;
 @Log4j2
 public class MessageService {
 
-    @Autowired
-    private BotConfig botConfig;
-    @Autowired
-    private RestTemplate restTemplate;
+
+    private final BotConfig botConfig;
+    private final RestTemplate restTemplate;
 
     public SendMessage sendMessage(Integer id, String text, Keyboard keyboard){
         SendMessage message = new SendMessage(id, text, keyboard);
