@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -35,7 +33,6 @@ public class GameService {
             log.info("Save data to DB: " + game);
             gameRepository.save(game);
         } else updateStatInDB(gameResult, chatId);
-        showStat(chatId);
         log.info("ChatId is already defined");
     }
 
@@ -44,22 +41,29 @@ public class GameService {
         switch (gameResult) {
             case WON:
                 replaceResult.setWon(replaceResult.getWon() + 1);
-                gameRepository.save(replaceResult);//save повторюється
                 break;
             case DRAW:
                 replaceResult.setDraw(replaceResult.getDraw() + 1);
-                gameRepository.save(replaceResult);
                 break;
             case LOSE:
                 replaceResult.setLose(replaceResult.getLose() + 1);
-                gameRepository.save(replaceResult);
                 break;
         }
+        gameRepository.save(replaceResult);
     }
 
     public String showStat(Integer chatId) {
         Game showResult = gameRepository.findByChatId((chatId)).get();
-        return String.format("Пользователь: " + showResult.getFirstName() + "%nПобеды: "
-        + showResult.getWon() + "%nНичьи: " + showResult.getDraw() + "%nПоражения: " + showResult.getLose());
+        StringBuilder result = new StringBuilder("Пользователь: ");
+        result.append(showResult.getFirstName());
+        result.append("%nПобеды: ");
+        result.append(showResult.getWon());
+        result.append("%nНичьи: ");
+        result.append(showResult.getDraw());
+        result.append("%nПоражения: ");
+        result.append(showResult.getLose());
+        /*return String.format("Пользователь: " + showResult.getFirstName() + "%nПобеды: "
+        + showResult.getWon() + "%nНичьи: " + showResult.getDraw() + "%nПоражения: " + showResult.getLose());*/
+        return String.format(result.toString());
     }
 }

@@ -23,21 +23,19 @@ public class BotController {
     @Autowired
     ChatService chatService;
 
-    @Autowired
-    GameService gameService;
 
     @PostMapping
     public ResponseEntity<String> display(@RequestBody Update update) {
         log.info("Input post: " + update);
-        if (update.hasMessage()) {
+        //if (update.hasMessage()) {
             botService.handleUpdate(update);
             chatService.sendToDB(update);
-        } else if (update.hasEditedMessage()) {
+       // } else if (update.hasEditedMessage()) {
             chatService.updateDB(update);
-        }
-        if (update.hasCallbackQuery()) {
+       // }
+        //if (update.hasCallbackQuery()) {
             botService.updateCallbackQuery(update);
-        }
+        //}
         return ResponseEntity.ok().build();
     }
 }

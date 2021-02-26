@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -17,27 +18,32 @@ import java.util.Random;
 @Log4j2
 public class BotService {
 
-    private final RestTemplate restTemplate;
-    private final BotConfig botConfig;
+    //private final RestTemplate restTemplate;
+    //private final BotConfig botConfig;
     private final GameService gameService;
     private final MessageService messageService;
 
     private List<String> options = List.of("Stone", "Scissors", "Paper");
 
     public void handleUpdate(Update update) {
-        switch (update.getMessage().getText()) {
-            case "/start":
-            case "Сыграть еще раз":
-                SendMessage choiceMessage = getChoiceMessage(update.getMessage().getChat().getId());
-                restTemplate.postForObject(botConfig.getDomain() + botConfig.getToken() + "/sendMessage",
-                        choiceMessage, SendMessage.class);
-                break;
-            case "Статистика":
-                SendMessage statMessage = messageService.sendMessage(update.getMessage().getChat().getId(),
+        if (update.hasMessage()){
+            switch (update.getMessage().getText()) {
+                case "/start":
+                case "Сыграть еще раз":
+                    /*SendMessage choiceMessage = */
+                    getChoiceMessage(update.getMessage().getChat().getId());
+/*                restTemplate.postForObject(botConfig.getDomain() + botConfig.getToken() + "/sendMessage",
+                        choiceMessage, SendMessage.class);*/
+                    break;
+                case "Статистика":
+                    messageService.sendMessage(update.getMessage().getChat().getId(),
+                            gameService.showStat(update.getMessage().getChat().getId()),createReplyMarkup());
+                /*SendMessage statMessage = messageService.sendMessage(update.getMessage().getChat().getId(),
                         gameService.showStat(update.getMessage().getChat().getId()),createReplyMarkup());
                 restTemplate.postForObject(botConfig.getDomain() + botConfig.getToken() + "/sendMessage",
-                        statMessage, SendMessage.class);
-                break;
+                        statMessage, SendMessage.class);*/
+                    break;
+            }
         }
     }
 
@@ -53,15 +59,15 @@ public class BotService {
         gameButtonList.add(gameButtons);
         gameButtonList.add(randomButton);
         gameMarkup.setInlineKeyboard(gameButtonList);
-        SendMessage choiceMessage = messageService.sendMessage(chatId, "Выбирай свой вариант", gameMarkup);
-        return choiceMessage;
+        /*SendMessage choiceMessage = */
+        //return choiceMessage;
+        return messageService.sendMessage(chatId, "Выбирай свой вариант", gameMarkup);
     }
 
     public void updateCallbackQuery(Update update) {
-        AnswerCallbackQuery answerCallbackQuery = messageService.answerCallbackQuery(update.getCallbackQuery().getId(),
-                update.getCallbackQuery().getData());
-        log.info(answerCallbackQuery);
-        if (update.getCallbackQuery() != null) {
+        /*AnswerCallbackQuery answerCallbackQuery =*/
+        //log.info(answerCallbackQuery);
+        if (update.hasCallbackQuery()/*update.getCallbackQuery() != null*/) {
             log.info("Callback post: " + update.getCallbackQuery());
             String userChoice = getOption(update.getCallbackQuery().getData());
             String botChoice = getOption("Random");
@@ -71,15 +77,18 @@ public class BotService {
                     update.getCallbackQuery().getMessage().getChat().getFirstName());
 
 
-            SendMessage resultMessage = messageService.sendMessage(update.getCallbackQuery().getMessage().getChat().getId(),
+            /*SendMessage resultMessage = */
+            messageService.sendMessage(update.getCallbackQuery().getMessage().getChat().getId(),
                     message, createReplyMarkup());
-            restTemplate.postForObject(
+            messageService.answerCallbackQuery(update.getCallbackQuery().getId(),
+                    update.getCallbackQuery().getData());
+/*            restTemplate.postForObject(
                     botConfig.getDomain() + botConfig.getToken() + "/sendMessage",
-                    resultMessage, SendMessage.class);
+                    resultMessage, SendMessage.class);*/
         }
-        restTemplate.postForObject(
+/*        restTemplate.postForObject(
                 botConfig.getDomain() + botConfig.getToken() + "/answerCallbackQuery",
-                answerCallbackQuery, AnswerCallbackQuery.class);
+                answerCallbackQuery, AnswerCallbackQuery.class);*/
     }
 
     private InlineKeyboardButton createInlineButton(String text, String callbackData) {
@@ -112,6 +121,7 @@ public class BotService {
         if (options.contains(data)) {
             return data;
         }
+        //SecureRandom rand = new SecureRandom();
         Random random = new Random();
         return options.get(random.nextInt(3));
     }

@@ -15,6 +15,7 @@ public class ChatService {
     private final ChatRepository chatRepository;
 
     public void sendToDB(Update update) {
+        if (update.hasMessage()){
             if (chatRepository.findByChatId(update.getMessage().getChat().getId()).isEmpty()) {
                 Chat chat = new Chat();
                 chat.setChatId(update.getMessage().getChat().getId());
@@ -24,12 +25,15 @@ public class ChatService {
                 log.info("Save data to DB: " + chat);
                 chatRepository.save(chat);
             } else log.info("ChatId is already defined");
+        }
     }
 
     public void updateDB(Update update) {
-       Chat replaceText = chatRepository.findByChatId(update.getEditedMessage().getChat().getId()).get();
-           replaceText.setText(update.getEditedMessage().getText());
-           log.info("Updated data to DB: " + replaceText);
-           chatRepository.save(replaceText);
+        if (update.hasEditedMessage()){
+            Chat replaceText = chatRepository.findByChatId(update.getEditedMessage().getChat().getId()).get();
+            replaceText.setText(update.getEditedMessage().getText());
+            log.info("Updated data to DB: " + replaceText);
+            chatRepository.save(replaceText);
+        }
        }
 }
