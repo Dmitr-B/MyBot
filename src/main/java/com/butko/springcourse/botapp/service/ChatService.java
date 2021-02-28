@@ -7,6 +7,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -36,4 +40,29 @@ public class ChatService {
             chatRepository.save(replaceText);
         }
        }
+
+    public Chat getById(Long id) {
+        return chatRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
+    }
+
+    public List<Chat> getAll() {
+        return chatRepository.findAll();
+    }
+
+    public void saveChat(Chat chat) {
+        chatRepository.save(chat);
+    }
+
+    public void update(Long id, Chat updateChat) {
+        Chat chat = getById(id);
+        chat.setChatId(updateChat.getChatId());
+        chat.setFirstName(updateChat.getFirstName());
+        chat.setLastName(updateChat.getLastName());
+        chat.setText(updateChat.getText());
+        chatRepository.save(chat);
+    }
+
+    public void delete(Long id) {
+        chatRepository.deleteById(id);
+    }
 }
