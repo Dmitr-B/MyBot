@@ -4,6 +4,7 @@ import com.butko.springcourse.botapp.dto.telegram.Update;
 import com.butko.springcourse.botapp.service.BotService;
 import com.butko.springcourse.botapp.service.ChatService;
 import com.butko.springcourse.botapp.service.GameService;
+import com.butko.springcourse.botapp.service.MessageService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,19 +24,18 @@ public class BotController {
     @Autowired
     ChatService chatService;
 
+    @Autowired
+    MessageService messageService;
+
 
     @PostMapping
     public ResponseEntity<String> display(@RequestBody Update update) {
         log.info("Input post: " + update);
-        //if (update.hasMessage()) {
             botService.handleUpdate(update);
             chatService.sendToDB(update);
-       // } else if (update.hasEditedMessage()) {
             chatService.updateDB(update);
-       // }
-        //if (update.hasCallbackQuery()) {
             botService.updateCallbackQuery(update);
-        //}
+            messageService.messageToDB(update);
         return ResponseEntity.ok().build();
     }
 }

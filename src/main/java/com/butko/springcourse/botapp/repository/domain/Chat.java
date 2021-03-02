@@ -1,10 +1,14 @@
 package com.butko.springcourse.botapp.repository.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -25,4 +29,8 @@ public class Chat {
     private String lastName;
 
     private String text;
+
+    @OneToMany(mappedBy = "chat", fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<Message> messages;
 }

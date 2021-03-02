@@ -47,16 +47,12 @@ public class ChatController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<Void> updateChat(@RequestBody Chat chat, @PathVariable("id") Long id) {
-//        chat = chatService.getById(id);
-//        log.info("caht" + chat);
 
         if (chat == null) {
             return ResponseEntity.notFound().build();
         }
-        //chat = chatService.getById(id);
 
             chatService.update(id,chat);
-            //log.info("caht1" + chat);
         return ResponseEntity.ok().build();
     }
 
