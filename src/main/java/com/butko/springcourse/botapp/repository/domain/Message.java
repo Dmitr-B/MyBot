@@ -1,7 +1,5 @@
 package com.butko.springcourse.botapp.repository.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -23,8 +21,7 @@ public class Message {
 
     private String text;
 
-    @ManyToOne(/*cascade = CascadeType.MERGE, fetch = FetchType.LAZY*/)
-    @JoinColumn(name = "chat_id")
-    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
 }

@@ -3,7 +3,6 @@ package com.butko.springcourse.botapp.controller;
 import com.butko.springcourse.botapp.dto.telegram.Update;
 import com.butko.springcourse.botapp.service.BotService;
 import com.butko.springcourse.botapp.service.ChatService;
-import com.butko.springcourse.botapp.service.GameService;
 import com.butko.springcourse.botapp.service.MessageService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +30,11 @@ public class BotController {
     @PostMapping
     public ResponseEntity<String> display(@RequestBody Update update) {
         log.info("Input post: " + update);
-            botService.handleUpdate(update);
-            chatService.sendToDB(update);
-            chatService.updateDB(update);
-            botService.updateCallbackQuery(update);
-            messageService.messageToDB(update);
+        botService.handleUpdate(update);
+        chatService.sendToDB(update);
+        botService.updateCallbackQuery(update);
+        messageService.messageToDB(update);
+        messageService.updateMessageDB(update);
         return ResponseEntity.ok().build();
     }
 }

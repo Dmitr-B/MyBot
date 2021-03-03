@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,17 +24,21 @@ public class ChatService {
                 chat.setChatId(update.getMessage().getChat().getId());
                 chat.setFirstName(update.getMessage().getChat().getFirstName());
                 chat.setLastName(update.getMessage().getChat().getLastName());
-                chat.setText(update.getMessage().getText());
+                //chat.setText(update.getMessage().getText());
                 log.info("Save data to DB: " + chat);
                 chatRepository.save(chat);
-            } else log.info("ChatId is already defined");
+            } else {
+                Optional<Chat> chat = chatRepository.findByChatId(update.getMessage().getChat().getId());
+                chat.ifPresent(chat1 -> log.info("messages: {}", chat1.getMessages()));
+                log.info("ChatId is already defined");
+            }
         }
     }
 
     public void updateDB(Update update) {
         if (update.hasEditedMessage()){
             Chat replaceText = chatRepository.findByChatId(update.getEditedMessage().getChat().getId()).get();
-            replaceText.setText(update.getEditedMessage().getText());
+            //replaceText.setText(update.getEditedMessage().getText());
             log.info("Updated data to DB: " + replaceText);
             chatRepository.save(replaceText);
         }
@@ -46,6 +49,7 @@ public class ChatService {
     }
 
     public List<Chat> getAll() {
+
         return chatRepository.findAll();
     }
 
@@ -58,7 +62,7 @@ public class ChatService {
         chat.setChatId(updateChat.getChatId());
         chat.setFirstName(updateChat.getFirstName());
         chat.setLastName(updateChat.getLastName());
-        chat.setText(updateChat.getText());
+        //chat.setText(updateChat.getText());
         chatRepository.save(chat);
     }
 

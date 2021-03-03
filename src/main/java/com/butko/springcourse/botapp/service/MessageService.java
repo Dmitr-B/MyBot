@@ -16,6 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -56,5 +60,50 @@ public class MessageService {
             message.setChat(chat);
             messageRepository.save(message);
         }
+    }
+
+    public void updateMessageDB(Update update) {
+        if (update.hasEditedMessage()){
+            Message replaceText = messageRepository.findByMessageId(update.getEditedMessage().getMessageId());
+            replaceText.setText(update.getEditedMessage().getText());
+            log.info("Updated data to DB: " + replaceText);
+            messageRepository.save(replaceText);
+        }
+    }
+
+    public Message getById(Long id) {
+        return messageRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
+    }
+
+    public List<Message> getAll() {
+        return messageRepository.findAll();
+    }
+
+    /*public List<Message> test1() {
+        List<Message> m = messageRepository.findAll();
+    }
+
+    public List<Chat> test() {
+        return messageRepository.findAll().stream()
+                .skip(15)
+                .filter(message -> message.getChat().getId().equals(1L))
+                .limit(10)
+                .map(Message::getChat)
+                .collect(Collectors.toList());
+    }*/
+
+    public void saveMessage(Message message) {
+        messageRepository.save(message);
+    }
+
+    public void updateMessage(Long id, Message updateMessage) {
+        Message message = getById(id);
+        message.setMessageId(updateMessage.getMessageId());
+        message.setText(updateMessage.getText());
+        messageRepository.save(message);
+    }
+
+    public void deleteMessage(Long id) {
+        messageRepository.deleteById(id);
     }
 }
