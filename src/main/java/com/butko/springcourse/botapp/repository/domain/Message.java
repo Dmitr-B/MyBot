@@ -1,7 +1,10 @@
 package com.butko.springcourse.botapp.repository.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -21,6 +24,7 @@ public class Message {
 
     private String text;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;

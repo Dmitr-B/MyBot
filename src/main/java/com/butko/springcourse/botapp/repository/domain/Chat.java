@@ -1,7 +1,9 @@
 package com.butko.springcourse.botapp.repository.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -24,7 +26,9 @@ public class Chat {
 
     private String lastName;
 
+
     @Transient
-    @OneToMany(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY)
     private List<Message> messages;
 }
