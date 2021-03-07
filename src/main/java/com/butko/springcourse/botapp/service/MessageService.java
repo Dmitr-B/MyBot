@@ -9,16 +9,12 @@ import com.butko.springcourse.botapp.repository.ChatRepository;
 import com.butko.springcourse.botapp.repository.MessageRepository;
 import com.butko.springcourse.botapp.repository.domain.Chat;
 import com.butko.springcourse.botapp.repository.domain.Message;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.transaction.Transactional;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,18 +27,17 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final ChatRepository chatRepository;
 
-    public SendMessage sendMessage(Integer id, String text, Keyboard keyboard){
-        SendMessage message = new SendMessage(id, text, keyboard);
+    public SendMessage sendMessage(Integer chatId, String text, Keyboard keyboard){
+        SendMessage message = new SendMessage(chatId, text, keyboard);
         restTemplate.postForObject(botConfig.getDomain() + botConfig.getToken() + "/sendMessage",
                 message, SendMessage.class);
         return message;
     }
 
-    public AnswerCallbackQuery answerCallbackQuery(String id, String text) {
+    public void answerCallbackQuery(String id, String text) {
         AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(id, text);
         restTemplate.postForObject(botConfig.getDomain() + botConfig.getToken() + "/answerCallbackQuery",
                 answerCallbackQuery, SendMessage.class);
-        return answerCallbackQuery;
     }
 
     public void messageToDB(Update update) {

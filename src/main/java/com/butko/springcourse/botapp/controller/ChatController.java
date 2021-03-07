@@ -56,17 +56,6 @@ public class ChatController {
         return ResponseEntity.ok().build();
     }
 
-    //1. створити таблицю з ключом на таблицю chat
-    //2. виборка даних з 2 таблиць
-
-    //todo створити table message де будуть зберігатись всі повідомлення
-    // - id
-    // - msgId
-    // - text
-
-    // @ManyToOne
-    // - Chat chat
-
     @PostMapping()
     public ResponseEntity<Chat> saveChat(@RequestBody Chat chat) {
 

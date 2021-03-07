@@ -3,11 +3,13 @@ package com.butko.springcourse.botapp.dto.telegram;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 public class SendMessage{
 
     @JsonProperty("chat_id")

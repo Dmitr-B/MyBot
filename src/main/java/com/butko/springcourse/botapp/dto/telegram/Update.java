@@ -28,20 +28,14 @@ public class Update {
     }
 
     public boolean hasMessage() {
-        if (message != null) {
-            return true;
-        } else return false;
+        return message != null;
     }
 
     public boolean hasEditedMessage() {
-        if (editedMessage != null) {
-            return true;
-        } else return false;
+        return editedMessage != null;
     }
 
     public boolean hasCallbackQuery() {
-        if (callbackQuery != null) {
-            return true;
-        } else return false;
+        return callbackQuery != null;
     }
 }

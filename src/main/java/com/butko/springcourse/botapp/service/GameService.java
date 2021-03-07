@@ -37,7 +37,7 @@ public class GameService {
     }
 
     public void updateStatInDB(GameResult gameResult, Integer chatId) {
-        Game replaceResult = gameRepository.findByChatId(chatId).get();
+        Game replaceResult = gameRepository.findByChatId(chatId).orElse(null);
         switch (gameResult) {
             case WON:
                 replaceResult.setWon(replaceResult.getWon() + 1);
@@ -53,7 +53,7 @@ public class GameService {
     }
 
     public String showStat(Integer chatId) {
-        Game showResult = gameRepository.findByChatId((chatId)).get();
+        Game showResult = gameRepository.findByChatId((chatId)).orElse(null);
         StringBuilder result = new StringBuilder("Пользователь: ");
         result.append(showResult.getFirstName());
         result.append("\nПобеды: ");

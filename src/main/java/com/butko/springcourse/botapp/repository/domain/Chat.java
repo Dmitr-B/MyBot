@@ -1,6 +1,5 @@
 package com.butko.springcourse.botapp.repository.domain;
 
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

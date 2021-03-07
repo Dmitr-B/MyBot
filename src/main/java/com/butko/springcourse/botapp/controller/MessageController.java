@@ -26,7 +26,6 @@ public class MessageController {
         }
 
         Message message = messageService.getById(id);
-        //log.info("MSG" + message);
 
         if (message == null) {
             return ResponseEntity.notFound().build();
@@ -42,6 +41,7 @@ public class MessageController {
         if (messages.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+
         return ResponseEntity.ok(messages);
     }
 
@@ -53,6 +53,7 @@ public class MessageController {
         }
 
         messageService.saveMessage(message);
+
         return ResponseEntity.ok(message);
     }
 
@@ -64,6 +65,7 @@ public class MessageController {
         }
 
         messageService.updateMessage(id, message);
+
         return ResponseEntity.ok(message);
     }
 
@@ -76,6 +78,7 @@ public class MessageController {
         }
 
         messageService.deleteMessage(id);
+
         return ResponseEntity.noContent().build();
     }
 }
