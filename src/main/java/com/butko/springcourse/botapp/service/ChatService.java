@@ -21,10 +21,11 @@ public class ChatService {
         if (update.hasMessage()){
             if (chatRepository.findByChatId(update.getMessage().getChat().getId()).isEmpty()) {
                 Chat chat = new Chat();
+
                 chat.setChatId(update.getMessage().getChat().getId());
                 chat.setFirstName(update.getMessage().getChat().getFirstName());
                 chat.setLastName(update.getMessage().getChat().getLastName());
-                //chat.setText(update.getMessage().getText());
+
                 log.info("Save data to DB: " + chat);
                 chatRepository.save(chat);
             } else {
@@ -34,15 +35,6 @@ public class ChatService {
             }
         }
     }
-
-    public void updateDB(Update update) {
-        if (update.hasEditedMessage()){
-            Chat replaceText = chatRepository.findByChatId(update.getEditedMessage().getChat().getId()).get();
-            //replaceText.setText(update.getEditedMessage().getText());
-            log.info("Updated data to DB: " + replaceText);
-            chatRepository.save(replaceText);
-        }
-       }
 
     public Chat getById(Long id) {
         return chatRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));

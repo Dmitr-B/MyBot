@@ -17,6 +17,7 @@ public class GameService {
     public void sendStatToDB(GameResult gameResult, Integer chatId, String firstName) {
         if (gameRepository.findByChatId(Long.valueOf(chatId)).isEmpty()) {
             Game game = new Game();
+
             game.setChatId(chatId);
             game.setFirstName(firstName);
             switch (gameResult) {
@@ -37,7 +38,7 @@ public class GameService {
     }
 
     public void updateStatInDB(GameResult gameResult, Integer chatId) {
-        Game replaceResult = gameRepository.findByChatId(chatId).orElse(null);
+        Game replaceResult = gameRepository.findByChatId(chatId).orElseThrow();
         switch (gameResult) {
             case WON:
                 replaceResult.setWon(replaceResult.getWon() + 1);
@@ -53,8 +54,9 @@ public class GameService {
     }
 
     public String showStat(Integer chatId) {
-        Game showResult = gameRepository.findByChatId((chatId)).orElse(null);
+        Game showResult = gameRepository.findByChatId((chatId)).orElseThrow();
         StringBuilder result = new StringBuilder("Пользователь: ");
+
         result.append(showResult.getFirstName());
         result.append("\nПобеды: ");
         result.append(showResult.getWon());
@@ -62,8 +64,7 @@ public class GameService {
         result.append(showResult.getDraw());
         result.append("\nПоражения: ");
         result.append(showResult.getLose());
-        /*return String.format("Пользователь: " + showResult.getFirstName() + "%nПобеды: "
-        + showResult.getWon() + "%nНичьи: " + showResult.getDraw() + "%nПоражения: " + showResult.getLose());*/
+
         return result.toString();
     }
 }

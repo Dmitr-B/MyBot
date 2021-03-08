@@ -15,30 +15,25 @@ import java.util.Random;
 @Log4j2
 public class BotService {
 
-    //private final RestTemplate restTemplate;
-    //private final BotConfig botConfig;
+
     private final GameService gameService;
     private final MessageService messageService;
 
-    private List<String> options = List.of("Stone", "Scissors", "Paper");
+    private final List<String> options = List.of("Stone", "Scissors", "Paper");
 
     public void handleUpdate(Update update) {
         if (update.hasMessage()){
             switch (update.getMessage().getText()) {
                 case "/start":
                 case "Сыграть еще раз":
-                    /*SendMessage choiceMessage = */
+
                     getChoiceMessage(update.getMessage().getChat().getId());
-/*                restTemplate.postForObject(botConfig.getDomain() + botConfig.getToken() + "/sendMessage",
-                        choiceMessage, SendMessage.class);*/
+
                     break;
                 case "Статистика":
                     messageService.sendMessage(update.getMessage().getChat().getId(),
                             gameService.showStat(update.getMessage().getChat().getId()),createReplyMarkup());
-                /*SendMessage statMessage = messageService.sendMessage(update.getMessage().getChat().getId(),
-                        gameService.showStat(update.getMessage().getChat().getId()),createReplyMarkup());
-                restTemplate.postForObject(botConfig.getDomain() + botConfig.getToken() + "/sendMessage",
-                        statMessage, SendMessage.class);*/
+
                     break;
             }
         }
@@ -48,6 +43,7 @@ public class BotService {
         InlineKeyboardMarkup gameMarkup = new InlineKeyboardMarkup();
         List<InlineKeyboardButton> gameButtons = new ArrayList<>();
         List<InlineKeyboardButton> randomButton = new ArrayList<>();
+
         gameButtons.add(createInlineButton("\u270a", "Stone"));
         gameButtons.add(createInlineButton("\u270c\ufe0f", "Scissors"));
         gameButtons.add(createInlineButton("\ud83e\udd1a", "Paper"));
@@ -56,37 +52,29 @@ public class BotService {
         gameButtonList.add(gameButtons);
         gameButtonList.add(randomButton);
         gameMarkup.setInlineKeyboard(gameButtonList);
-        /*SendMessage choiceMessage = */
-        //return choiceMessage;
+
         return messageService.sendMessage(chatId, "Выбирай свой вариант", gameMarkup);
     }
 
     public void updateCallbackQuery(Update update) {
-        /*AnswerCallbackQuery answerCallbackQuery =*/
-        //log.info(answerCallbackQuery);
-        if (update.hasCallbackQuery()/*update.getCallbackQuery() != null*/) {
+
+        if (update.hasCallbackQuery()) {
             log.info("Callback post: " + update.getCallbackQuery());
             String userChoice = getOption(update.getCallbackQuery().getData());
             String botChoice = getOption("Random");
             GameResult gameResult = playGame(userChoice, botChoice);
             String message = userChoice + " vs " + botChoice + " " + gameResult.toString();
+
             gameService.sendStatToDB(gameResult, update.getCallbackQuery().getMessage().getChat().getId(),
                     update.getCallbackQuery().getMessage().getChat().getFirstName());
 
-
-            /*SendMessage resultMessage = */
             messageService.sendMessage(update.getCallbackQuery().getMessage().getChat().getId(),
                     message, createReplyMarkup());
 
             messageService.answerCallbackQuery(update.getCallbackQuery().getId(),
                     update.getCallbackQuery().getData());
-/*            restTemplate.postForObject(
-                    botConfig.getDomain() + botConfig.getToken() + "/sendMessage",
-                    resultMessage, SendMessage.class);*/
+
         }
-/*        restTemplate.postForObject(
-                botConfig.getDomain() + botConfig.getToken() + "/answerCallbackQuery",
-                answerCallbackQuery, AnswerCallbackQuery.class);*/
     }
 
     private InlineKeyboardButton createInlineButton(String text, String callbackData) {
@@ -121,6 +109,7 @@ public class BotService {
         }
         //SecureRandom rand = new SecureRandom();
         Random random = new Random();
+
         return options.get(random.nextInt(3));
     }
 

@@ -15,12 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class MessageService {
-
 
     private final BotConfig botConfig;
     private final RestTemplate restTemplate;
@@ -29,30 +29,37 @@ public class MessageService {
 
     public SendMessage sendMessage(Integer chatId, String text, Keyboard keyboard){
         SendMessage message = new SendMessage(chatId, text, keyboard);
+
         restTemplate.postForObject(botConfig.getDomain() + botConfig.getToken() + "/sendMessage",
                 message, SendMessage.class);
+
         return message;
     }
 
     public void answerCallbackQuery(String id, String text) {
         AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery(id, text);
+
         restTemplate.postForObject(botConfig.getDomain() + botConfig.getToken() + "/answerCallbackQuery",
                 answerCallbackQuery, SendMessage.class);
     }
 
-    public void messageToDB(Update update) {
+    public void messageToDB(Update update) throws NullPointerException {
         if (update.hasMessage()) {
             Message message = new Message();
             Chat chat = new Chat();
-            chat.setId(chatRepository.findByChatId(update.getMessage().getChat().getId()).get().getId());
-            //chat.setChatId(update.getMessage().getChat().getId());
-            //chat.setFirstName(update.getMessage().getChat().getFirstName());
-            //chat.setLastName(update.getMessage().getChat().getLastName());
-            //chat.setText(update.getMessage().getText());
-            log.info("chuit" + chat);
+
+            try {
+                chat.setId(chatRepository.findByChatId(update.getMessage().getChat().getId()).
+                        orElseThrow().getId());
+            } catch (NullPointerException e){
+                e.printStackTrace();
+            }
+
+
             message.setMessageId(update.getMessage().getMessageId());
             message.setText(update.getMessage().getText());
             message.setChat(chat);
+
             messageRepository.save(message);
         }
     }
@@ -62,6 +69,7 @@ public class MessageService {
             Message replaceText = messageRepository.findByMessageId(update.getEditedMessage().getMessageId());
             replaceText.setText(update.getEditedMessage().getText());
             log.info("Updated data to DB: " + replaceText);
+
             messageRepository.save(replaceText);
         }
     }
@@ -95,6 +103,7 @@ public class MessageService {
         Message message = getById(id);
         message.setMessageId(updateMessage.getMessageId());
         message.setText(updateMessage.getText());
+
         messageRepository.save(message);
     }
 
