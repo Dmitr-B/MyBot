@@ -1,11 +1,14 @@
 package com.butko.springcourse.botapp.service;
 
 import com.butko.springcourse.botapp.config.BotConfig;
+import com.butko.springcourse.botapp.dto.telegram.AnswerCallbackQuery;
 import com.butko.springcourse.botapp.dto.telegram.ForceReply;
 import com.butko.springcourse.botapp.dto.telegram.Keyboard;
 import com.butko.springcourse.botapp.dto.telegram.SendMessage;
 import com.butko.springcourse.botapp.repository.ChatRepository;
 import com.butko.springcourse.botapp.repository.MessageRepository;
+import com.butko.springcourse.botapp.repository.domain.Chat;
+import com.butko.springcourse.botapp.repository.domain.Message;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +32,7 @@ public class MessageServiceUnitTest {
     private static final String TEST_TOKEN = "1661234049:asdfghjkl";
     private static final Integer TEST_CHAT_ID = 123;
     private static final String TEST_TEXT = "Hello";
+    private static final String TEST_QUERY_ID = "Test_id";
     private static final Keyboard TEST_KEYBOARD = new ForceReply();
 
     @InjectMocks
@@ -67,4 +71,43 @@ public class MessageServiceUnitTest {
 
         verify(restTemplate).postForObject(anyString(), any(), any());
     }
+
+    @Test
+    @DisplayName("CallbackQuery test successful")
+    void answerCallbackQuery_whenValidData_thenOk() {
+
+        when(botConfig.getDomain()).thenReturn(TEST_DOMAIN);
+        when(botConfig.getToken()).thenReturn(TEST_TOKEN);
+
+        messageService.answerCallbackQuery(TEST_QUERY_ID, TEST_TEXT);
+        verify(restTemplate).postForObject("https://api.telegram.org/bot1661234049:asdfghjkl/answerCallbackQuery",
+                new AnswerCallbackQuery(TEST_QUERY_ID, TEST_TEXT), SendMessage.class);
+    }
+
+    @Test
+    void answerCallbackQuery_whenRestClientException_thenThrow() {
+        String expectedMessage = "test";
+        when(restTemplate.postForObject(anyString(), any(), any())).thenThrow(new RestClientException(expectedMessage));
+
+        RestClientException actual = assertThrows(RestClientException.class,
+                () -> messageService.answerCallbackQuery(TEST_QUERY_ID, TEST_TEXT));
+        assertEquals(expectedMessage, actual.getMessage());
+
+        verify(restTemplate).postForObject(anyString(), any(), any());
+    }
+
+    /*@Test
+    void sendMessageToDB_whenSave_thenOk() {
+        Message message = new Message();
+        Chat chat = new Chat();
+
+        when(chat.getChatId()).thenReturn(1L);
+        when(message.getChat().getChatId()).thenReturn(1L);
+        when(message.getId()).thenReturn(1L);
+        when(message.getMessageId()).thenReturn(123);
+        when(message.getText()).thenReturn("hello");
+
+        //messageRepository.save(message);
+        verify(messageRepository).save(message);
+    }*/
 }
