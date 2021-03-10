@@ -7,7 +7,6 @@ import com.butko.springcourse.botapp.dto.telegram.Keyboard;
 import com.butko.springcourse.botapp.dto.telegram.SendMessage;
 import com.butko.springcourse.botapp.repository.ChatRepository;
 import com.butko.springcourse.botapp.repository.MessageRepository;
-import com.butko.springcourse.botapp.repository.domain.Chat;
 import com.butko.springcourse.botapp.repository.domain.Message;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,8 +17,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -97,17 +98,63 @@ public class MessageServiceUnitTest {
     }
 
     /*@Test
-    void sendMessageToDB_whenSave_thenOk() {
+    void sendMessageToDB_whenSave_thenOk() throws NullPointerException{
         Message message = new Message();
         Chat chat = new Chat();
 
-        when(chat.getChatId()).thenReturn(1L);
-        when(message.getChat().getChatId()).thenReturn(1L);
-        when(message.getId()).thenReturn(1L);
-        when(message.getMessageId()).thenReturn(123);
-        when(message.getText()).thenReturn("hello");
+        chat.setId(1L);
+        message.setId(1L);
+        message.setMessageId(123);
+        message.setText("test_text");
 
-        //messageRepository.save(message);
+        //when(chat.getId()).thenReturn(1L);
+        message.setChat(chat);
+
+
+        messageService.messageToDB(any(Update.class));
         verify(messageRepository).save(message);
+        *//*Message savedMessage = messageRepository.save(entityTest.testMessage());
+        assertNotNull(savedMessage);*//*
     }*/
+
+    @Test
+    void saveMessage_whenSave_theOk() {
+        Message message = new Message();
+        message.setId(1L);
+        message.setMessageId(123);
+        message.setText("test_text");
+
+        messageService.saveMessage(message);
+        assertNotNull(message);
+
+        verify(messageRepository).save(message);
+    }
+
+    @Test
+    void saveMessage_whenSave_isEmpty() {
+        Message message = new Message();
+        when(messageRepository.save(any())).thenThrow(new NullPointerException("is null"));
+
+        NullPointerException actual = assertThrows(NullPointerException.class,
+                () -> messageService.saveMessage(message));
+        assertNull(message.getId());
+
+        verify(messageRepository).save(message);
+    }
+
+    @Test
+    void getAllMessage_whenGet_theOk() {
+        List<Message> expectedList = new ArrayList<>();
+        Message message = new Message();
+        message.setId(1L);
+        message.setMessageId(123);
+        message.setText("test_text");
+        expectedList.add(message);
+        when(messageRepository.findAll()).thenReturn(expectedList);
+
+        List<Message> actualList = messageService.getAll();
+        assertEquals(expectedList, actualList);
+
+        verify(messageRepository).findAll();
+    }
 }
