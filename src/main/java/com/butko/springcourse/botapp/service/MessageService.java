@@ -7,15 +7,14 @@ import com.butko.springcourse.botapp.dto.telegram.SendMessage;
 import com.butko.springcourse.botapp.dto.telegram.Update;
 import com.butko.springcourse.botapp.repository.ChatRepository;
 import com.butko.springcourse.botapp.repository.MessageRepository;
-import com.butko.springcourse.botapp.repository.domain.Chat;
 import com.butko.springcourse.botapp.repository.domain.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +26,7 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final ChatRepository chatRepository;
 
-    public SendMessage sendMessage(Integer chatId, String text, Keyboard keyboard){
+    public SendMessage sendMessage(Integer chatId, String text, Keyboard keyboard) {
         SendMessage message = new SendMessage(chatId, text, keyboard);
 
         restTemplate.postForObject(botConfig.getDomain() + botConfig.getToken() + "/sendMessage",
@@ -43,57 +42,37 @@ public class MessageService {
                 answerCallbackQuery, SendMessage.class);
     }
 
-    public void messageToDB(Update update) throws NullPointerException {
+    public void messageToDB(Update update) {
         if (update.hasMessage()) {
-            Message message = new Message();
-            Chat chat = new Chat();
-
-            try {
-                chat.setId(chatRepository.findByChatId(update.getMessage().getChat().getId()).
-                        orElseThrow().getId());
-            } catch (NullPointerException e){
-                e.printStackTrace();
-            }
-
-
-            message.setMessageId(update.getMessage().getMessageId());
-            message.setText(update.getMessage().getText());
-            message.setChat(chat);
-
-            messageRepository.save(message);
+            chatRepository.findByChatId(update.getMessage().getChat().getId())
+                    .ifPresent(chat -> {
+                        Message message = new Message();
+                        message.setMessageId(update.getMessage().getMessageId());
+                        message.setText(update.getMessage().getText());
+                        message.setChat(chat);
+                        messageRepository.save(message);
+                    });
         }
     }
 
     public void updateMessageDB(Update update) {
-        if (update.hasEditedMessage()){
-            Message replaceText = messageRepository.findByMessageId(update.getEditedMessage().getMessageId());
-            replaceText.setText(update.getEditedMessage().getText());
-            log.info("Updated data to DB: " + replaceText);
-
-            messageRepository.save(replaceText);
+        if (update.hasEditedMessage()) {
+            messageRepository.findByMessageId(update.getEditedMessage().getMessageId())
+                    .ifPresent(messageToUpdate -> {
+                        messageToUpdate.setText(update.getEditedMessage().getText());
+                        log.info("Updated data to DB: " + messageToUpdate);
+                        messageRepository.save(messageToUpdate);
+                    });
         }
     }
 
     public Message getById(Long id) {
-        return messageRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
+        return messageRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("ID: " + id));
     }
 
     public List<Message> getAll() {
         return messageRepository.findAll();
     }
-
-    /*public List<Message> test1() {
-        List<Message> m = messageRepository.findAll();
-    }
-
-    public List<Chat> test() {
-        return messageRepository.findAll().stream()
-                .skip(15)
-                .filter(message -> message.getChat().getId().equals(1L))
-                .limit(10)
-                .map(Message::getChat)
-                .collect(Collectors.toList());
-    }*/
 
     public void saveMessage(Message message) {
         messageRepository.save(message);
@@ -103,7 +82,6 @@ public class MessageService {
         Message message = getById(id);
         message.setMessageId(updateMessage.getMessageId());
         message.setText(updateMessage.getText());
-
         messageRepository.save(message);
     }
 

@@ -1,10 +1,7 @@
 package com.butko.springcourse.botapp.service;
 
 import com.butko.springcourse.botapp.config.BotConfig;
-import com.butko.springcourse.botapp.dto.telegram.AnswerCallbackQuery;
-import com.butko.springcourse.botapp.dto.telegram.ForceReply;
-import com.butko.springcourse.botapp.dto.telegram.Keyboard;
-import com.butko.springcourse.botapp.dto.telegram.SendMessage;
+import com.butko.springcourse.botapp.dto.telegram.*;
 import com.butko.springcourse.botapp.repository.ChatRepository;
 import com.butko.springcourse.botapp.repository.MessageRepository;
 import com.butko.springcourse.botapp.repository.domain.Message;
@@ -17,14 +14,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith({MockitoExtension.class})
 public class MessageServiceUnitTest {
@@ -34,6 +33,7 @@ public class MessageServiceUnitTest {
     private static final Integer TEST_CHAT_ID = 123;
     private static final String TEST_TEXT = "Hello";
     private static final String TEST_QUERY_ID = "Test_id";
+    private static final Long TEST_ID = 1L;
     private static final Keyboard TEST_KEYBOARD = new ForceReply();
 
     @InjectMocks
@@ -46,6 +46,9 @@ public class MessageServiceUnitTest {
     private MessageRepository messageRepository;
     @Mock
     private ChatRepository chatRepository;
+
+    //1. дописуєш тести (і на контроллери)
+    //2. пробуєш інтеграційні тести
 
     @Test
     @DisplayName("Single test successful")
@@ -76,11 +79,11 @@ public class MessageServiceUnitTest {
     @Test
     @DisplayName("CallbackQuery test successful")
     void answerCallbackQuery_whenValidData_thenOk() {
-
         when(botConfig.getDomain()).thenReturn(TEST_DOMAIN);
         when(botConfig.getToken()).thenReturn(TEST_TOKEN);
 
         messageService.answerCallbackQuery(TEST_QUERY_ID, TEST_TEXT);
+
         verify(restTemplate).postForObject("https://api.telegram.org/bot1661234049:asdfghjkl/answerCallbackQuery",
                 new AnswerCallbackQuery(TEST_QUERY_ID, TEST_TEXT), SendMessage.class);
     }
@@ -97,64 +100,101 @@ public class MessageServiceUnitTest {
         verify(restTemplate).postForObject(anyString(), any(), any());
     }
 
-    /*@Test
-    void sendMessageToDB_whenSave_thenOk() throws NullPointerException{
-        Message message = new Message();
-        Chat chat = new Chat();
+    @Test
+    void sendMessageToDB_whenHasMessageAndChatDoesNotExist_thenDoNotSave() {
+        com.butko.springcourse.botapp.dto.telegram.Chat chat = new com.butko.springcourse.botapp.dto.telegram.Chat();
+        chat.setId(1234);
 
-        chat.setId(1L);
-        message.setId(1L);
-        message.setMessageId(123);
-        message.setText("test_text");
-
-        //when(chat.getId()).thenReturn(1L);
+        com.butko.springcourse.botapp.dto.telegram.Message message = new com.butko.springcourse.botapp.dto.telegram.Message();
+        message.setMessageId(4565);
+        message.setText(TEST_TEXT);
         message.setChat(chat);
 
+        Update update = new Update();
+        update.setMessage(message);
 
-        messageService.messageToDB(any(Update.class));
-        verify(messageRepository).save(message);
-        *//*Message savedMessage = messageRepository.save(entityTest.testMessage());
-        assertNotNull(savedMessage);*//*
-    }*/
+        when(chatRepository.findByChatId(1234)).thenReturn(Optional.empty());
+
+        messageService.messageToDB(update);
+
+        verify(messageRepository, never()).save(any());
+    }
+
+    //todo додати 2 тести
 
     @Test
-    void saveMessage_whenSave_theOk() {
+    void saveMessage_whenSave_thenOk() {
         Message message = new Message();
-        message.setId(1L);
+        message.setId(TEST_ID);
         message.setMessageId(123);
-        message.setText("test_text");
+        message.setText(TEST_TEXT);
 
         messageService.saveMessage(message);
-        assertNotNull(message);
 
         verify(messageRepository).save(message);
     }
 
     @Test
-    void saveMessage_whenSave_isEmpty() {
+    void getAllMessage_whenGet_thenOk() {
+        List<Message> expected = new ArrayList<>();
         Message message = new Message();
-        when(messageRepository.save(any())).thenThrow(new NullPointerException("is null"));
-
-        NullPointerException actual = assertThrows(NullPointerException.class,
-                () -> messageService.saveMessage(message));
-        assertNull(message.getId());
-
-        verify(messageRepository).save(message);
-    }
-
-    @Test
-    void getAllMessage_whenGet_theOk() {
-        List<Message> expectedList = new ArrayList<>();
-        Message message = new Message();
-        message.setId(1L);
+        message.setId(TEST_ID);
         message.setMessageId(123);
-        message.setText("test_text");
-        expectedList.add(message);
-        when(messageRepository.findAll()).thenReturn(expectedList);
+        message.setText(TEST_TEXT);
+        expected.add(message);
 
-        List<Message> actualList = messageService.getAll();
-        assertEquals(expectedList, actualList);
+        when(messageRepository.findAll()).thenReturn(expected);
+
+        List<Message> actual = messageService.getAll();
+        assertEquals(expected, actual);
 
         verify(messageRepository).findAll();
+    }
+
+    @Test
+    void getMessageById_whenExists_thenOk() {
+        Message expected = new Message();
+        expected.setId(1L);
+        expected.setMessageId(123);
+        expected.setText(TEST_TEXT);
+        when(messageRepository.findById(TEST_ID)).thenReturn(Optional.of(expected));
+
+        Message actual = messageService.getById(TEST_ID);
+        assertEquals(expected, actual);
+
+        verify(messageRepository).findById(TEST_ID);
+    }
+
+    @Test
+    void getMessageById_whenDoesNotExist_thenThrow() {
+        when(messageRepository.findById(TEST_ID)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> messageService.getById(TEST_ID));
+
+        verify(messageRepository).findById(TEST_ID);
+    }
+
+    @Test
+    void updateMessage_whenUpdate_thenOk() {
+        Message message = new Message();
+        message.setText("text1");
+        Message messageUpdate = new Message();
+        messageUpdate.setText("text2");
+
+        when(messageRepository.findById(TEST_ID)).thenReturn(Optional.of(message));
+
+        messageService.updateMessage(TEST_ID, messageUpdate);
+
+        verify(messageRepository).save(messageUpdate);
+    }
+
+    @Test
+    void deleteMessage_whenDelete_thenOk() {
+        Message message = new Message();
+        message.setId(TEST_ID);
+
+        messageService.deleteMessage(TEST_ID);
+
+        verify(messageRepository).deleteById(TEST_ID);
     }
 }

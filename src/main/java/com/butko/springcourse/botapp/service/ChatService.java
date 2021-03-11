@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,18 +19,16 @@ public class ChatService {
     private final ChatRepository chatRepository;
 
     public void sendToDB(Update update) {
-        if (update.hasMessage()){
-            if (chatRepository.findByChatId(update.getMessage().getChat().getId()).isEmpty()) {
-                Chat chat = new Chat();
-
-                chat.setChatId(update.getMessage().getChat().getId());
-                chat.setFirstName(update.getMessage().getChat().getFirstName());
-                chat.setLastName(update.getMessage().getChat().getLastName());
-
+        if (update.hasMessage()) {
+            Optional<Chat> chat = chatRepository.findByChatId(update.getMessage().getChat().getId());
+            if (chat.isEmpty()) {
+                Chat newChat = new Chat();
+                newChat.setChatId(update.getMessage().getChat().getId());
+                newChat.setFirstName(update.getMessage().getChat().getFirstName());
+                newChat.setLastName(update.getMessage().getChat().getLastName());
                 log.info("Save data to DB: " + chat);
-                chatRepository.save(chat);
+                chatRepository.save(newChat);
             } else {
-                Optional<Chat> chat = chatRepository.findByChatId(update.getMessage().getChat().getId());
                 chat.ifPresent(chat1 -> log.info("messages: {}", chat1.getMessages()));
                 log.info("ChatId is already defined");
             }
@@ -37,11 +36,10 @@ public class ChatService {
     }
 
     public Chat getById(Long id) {
-        return chatRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
+        return chatRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("ID: " + id));
     }
 
     public List<Chat> getAll() {
-
         return chatRepository.findAll();
     }
 
@@ -54,7 +52,6 @@ public class ChatService {
         chat.setChatId(updateChat.getChatId());
         chat.setFirstName(updateChat.getFirstName());
         chat.setLastName(updateChat.getLastName());
-        //chat.setText(updateChat.getText());
         chatRepository.save(chat);
     }
 

@@ -55,8 +55,8 @@ public class GameService {
 
     public String showStat(Integer chatId) {
         Game showResult = gameRepository.findByChatId((chatId)).orElseThrow();
-        StringBuilder result = new StringBuilder("Пользователь: ");
 
+        StringBuilder result = new StringBuilder("Пользователь: ");
         result.append(showResult.getFirstName());
         result.append("\nПобеды: ");
         result.append(showResult.getWon());
@@ -64,7 +64,6 @@ public class GameService {
         result.append(showResult.getDraw());
         result.append("\nПоражения: ");
         result.append(showResult.getLose());
-
         return result.toString();
     }
 }

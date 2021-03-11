@@ -15,7 +15,6 @@ import java.util.Random;
 @Log4j2
 public class BotService {
 
-
     private final GameService gameService;
     private final MessageService messageService;
 
@@ -26,14 +25,11 @@ public class BotService {
             switch (update.getMessage().getText()) {
                 case "/start":
                 case "Сыграть еще раз":
-
                     getChoiceMessage(update.getMessage().getChat().getId());
-
                     break;
                 case "Статистика":
                     messageService.sendMessage(update.getMessage().getChat().getId(),
                             gameService.showStat(update.getMessage().getChat().getId()),createReplyMarkup());
-
                     break;
             }
         }
@@ -48,6 +44,7 @@ public class BotService {
         gameButtons.add(createInlineButton("\u270c\ufe0f", "Scissors"));
         gameButtons.add(createInlineButton("\ud83e\udd1a", "Paper"));
         randomButton.add(createInlineButton("Выбрать случайное значение", "Random"));
+
         List<List<InlineKeyboardButton>> gameButtonList = new ArrayList<>();
         gameButtonList.add(gameButtons);
         gameButtonList.add(randomButton);
@@ -73,7 +70,6 @@ public class BotService {
 
             messageService.answerCallbackQuery(update.getCallbackQuery().getId(),
                     update.getCallbackQuery().getData());
-
         }
     }
 
@@ -94,9 +90,11 @@ public class BotService {
         ReplyKeyboardMarkup answerMarkup = new ReplyKeyboardMarkup();
         answerMarkup.setOneTimeKeyboard(true);
         answerMarkup.setResizeKeyboard(true);
+
         List<KeyboardButton> answerButtons = new ArrayList<>();
         answerButtons.add(createKeyboardButton("Сыграть еще раз"));
         answerButtons.add(createKeyboardButton("Статистика"));
+
         List<List<KeyboardButton>> answerButtonList = new ArrayList<>();
         answerButtonList.add(answerButtons);
         answerMarkup.setKeyboard(answerButtonList);
@@ -107,9 +105,7 @@ public class BotService {
         if (options.contains(data)) {
             return data;
         }
-        //SecureRandom rand = new SecureRandom();
         Random random = new Random();
-
         return options.get(random.nextInt(3));
     }
 

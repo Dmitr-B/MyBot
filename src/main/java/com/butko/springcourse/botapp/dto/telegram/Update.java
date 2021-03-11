@@ -4,9 +4,12 @@ package com.butko.springcourse.botapp.dto.telegram;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class Update {
+
     @JsonProperty("update_id")
     private Integer updateId;
 

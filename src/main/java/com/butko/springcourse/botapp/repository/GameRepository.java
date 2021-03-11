@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface GameRepository extends CrudRepository<Game, Long> {
+
     Optional<Game> findByChatId(long chatId);
-    //Game findByChatId(long chatId);
 }

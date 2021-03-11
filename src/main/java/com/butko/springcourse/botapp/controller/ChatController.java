@@ -2,8 +2,8 @@ package com.butko.springcourse.botapp.controller;
 
 import com.butko.springcourse.botapp.repository.domain.Chat;
 import com.butko.springcourse.botapp.service.ChatService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -13,11 +13,11 @@ import java.util.List;
 
 @Log4j2
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/api/chat")
 public class ChatController {
 
-    @Autowired
-    ChatService chatService;
+    private final ChatService chatService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Chat> getChat(@PathVariable("id") Long id) {
