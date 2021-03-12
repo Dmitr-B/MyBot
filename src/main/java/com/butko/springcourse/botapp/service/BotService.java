@@ -31,6 +31,10 @@ public class BotService {
                     messageService.sendMessage(update.getMessage().getChat().getId(),
                             gameService.showStat(update.getMessage().getChat().getId()),createReplyMarkup());
                     break;
+/*                default:
+                    messageService.sendMessage(update.getMessage().getChat().getId(),
+                            "Я пока что не могу отвечать на все сообщения. Давай играть", createReplyMarkup());
+                    break;*/
             }
         }
     }

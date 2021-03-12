@@ -120,7 +120,88 @@ public class MessageServiceUnitTest {
         verify(messageRepository, never()).save(any());
     }
 
-    //todo додати 2 тести
+    @Test
+    void sendMessageToDB_whenHasNotMessage_thenDoNotSave() {
+        Update update = new Update();
+
+        messageService.messageToDB(update);
+
+        verify(chatRepository, never()).findByChatId(anyLong());
+        verify(messageRepository, never()).save(any());
+    }
+
+    @Test
+    void sendMessageToDB_whenHasMessageAndChat_thenSave() {
+        com.butko.springcourse.botapp.dto.telegram.Chat chat = new com.butko.springcourse.botapp.dto.telegram.Chat();
+        com.butko.springcourse.botapp.repository.domain.Chat entityChat = new com.butko.springcourse.botapp.repository.domain.Chat();
+        chat.setId(1234);
+        entityChat.setId(1234L);
+
+        com.butko.springcourse.botapp.dto.telegram.Message message = new com.butko.springcourse.botapp.dto.telegram.Message();
+        message.setMessageId(4565);
+        message.setText(TEST_TEXT);
+        message.setChat(chat);
+        Message entityMessage = new Message();
+        entityMessage.setMessageId(4565);
+        entityMessage.setText(TEST_TEXT);
+        entityMessage.setChat(entityChat);
+
+        Update update = new Update();
+        update.setMessage(message);
+
+        when(chatRepository.findByChatId(1234)).thenReturn(Optional.of(entityChat));
+
+        messageService.messageToDB(update);
+
+        verify(chatRepository).findByChatId(1234);
+        verify(messageRepository).save(entityMessage);
+    }
+
+    @Test
+    void updateMessageToDB_whenHasUpdatedMessageAndMessageDoesNotExist_thenDoNotUpdate() {
+        com.butko.springcourse.botapp.dto.telegram.Message editedMessage = new com.butko.springcourse.botapp.dto.telegram.Message();
+        editedMessage.setText(TEST_TEXT);
+        editedMessage.setMessageId(1);
+
+        Update update = new Update();
+        update.setEditedMessage(editedMessage);
+
+        when(messageRepository.findByMessageId(1)).thenReturn(Optional.empty());
+
+        messageService.updateMessageDB(update);
+
+        verify(messageRepository, never()).save(any());
+    }
+
+    @Test
+    void updateMessageToDB_whenHasNotMessage_thenDoNotUpdate() {
+        Update update = new Update();
+
+        messageService.updateMessageDB(update);
+
+        verify(messageRepository, never()).findByMessageId(anyInt());
+        verify(messageRepository, never()).save(any());
+    }
+
+    @Test
+    void updateMessageToDB_whenHasUpdatedMessageAndMessage_thenUpdate() {
+        com.butko.springcourse.botapp.dto.telegram.Message editedMessage = new com.butko.springcourse.botapp.dto.telegram.Message();
+        editedMessage.setText(TEST_TEXT);
+        editedMessage.setMessageId(1);
+
+        Update update = new Update();
+        update.setEditedMessage(editedMessage);
+
+        Message message = new Message();
+        message.setText(TEST_TEXT);
+
+        when(messageRepository.findByMessageId(1)).thenReturn(Optional.of(message));
+
+        messageService.updateMessageDB(update);
+
+        verify(messageRepository).findByMessageId(1);
+        verify(messageRepository).save(message);
+    }
 
     @Test
     void saveMessage_whenSave_thenOk() {

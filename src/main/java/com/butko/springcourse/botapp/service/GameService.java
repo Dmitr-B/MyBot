@@ -38,19 +38,19 @@ public class GameService {
     }
 
     public void updateStatInDB(GameResult gameResult, Integer chatId) {
-        Game replaceResult = gameRepository.findByChatId(chatId).orElseThrow();
+        Game updateResult = gameRepository.findByChatId(chatId).orElseThrow();
         switch (gameResult) {
             case WON:
-                replaceResult.setWon(replaceResult.getWon() + 1);
+                updateResult.setWon(updateResult.getWon() + 1);
                 break;
             case DRAW:
-                replaceResult.setDraw(replaceResult.getDraw() + 1);
+                updateResult.setDraw(updateResult.getDraw() + 1);
                 break;
             case LOSE:
-                replaceResult.setLose(replaceResult.getLose() + 1);
+                updateResult.setLose(updateResult.getLose() + 1);
                 break;
         }
-        gameRepository.save(replaceResult);
+        gameRepository.save(updateResult);
     }
 
     public String showStat(Integer chatId) {
