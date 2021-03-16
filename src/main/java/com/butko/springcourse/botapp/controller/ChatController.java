@@ -32,7 +32,21 @@ public class ChatController {
         }
 
         return ResponseEntity.ok(chat);
+    }
 
+    @GetMapping("/user/{firstName}")
+    public ResponseEntity<Chat> getChatFromFirstName(@PathVariable("firstName") String firstName) {
+        if (firstName == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Chat chat = chatService.getByFirstName(firstName);
+
+        if (chat == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(chat);
     }
 
     @GetMapping()

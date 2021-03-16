@@ -74,6 +74,10 @@ public class MessageService {
         return messageRepository.findAll();
     }
 
+    public List<Message> getMessageByChatId(long chatId) {
+        return messageRepository.findMessageByChatId(chatId);
+    }
+
     public void saveMessage(Message message) {
         messageRepository.save(message);
     }

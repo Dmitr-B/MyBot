@@ -2,6 +2,7 @@ package com.butko.springcourse.botapp.service;
 
 import com.butko.springcourse.botapp.dto.GameResult;
 import com.butko.springcourse.botapp.dto.telegram.*;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;

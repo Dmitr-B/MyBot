@@ -39,6 +39,11 @@ public class ChatService {
         return chatRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("ID: " + id));
     }
 
+    public Chat getByFirstName(String firstName) {
+        log.info(firstName);
+        return chatRepository.findChatByFirstName(firstName);
+    }
+
     public List<Chat> getAll() {
         return chatRepository.findAll();
     }

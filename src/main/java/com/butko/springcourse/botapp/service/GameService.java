@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -65,5 +68,29 @@ public class GameService {
         result.append("\nПоражения: ");
         result.append(showResult.getLose());
         return result.toString();
+    }
+
+    public List<Game> getAllGame() {
+        return gameRepository.findAllGame();
+    }
+
+    public Game getGameById(Long id) {
+        return gameRepository.findGameById(id);
+    }
+
+    @Transactional
+    public void insertNewGame(long id, long chatId, String firstName, int won, int draw, int lose){
+        gameRepository.insertGame(id, chatId, firstName, won, draw, lose);
+    }
+
+    @Transactional
+    public void deleteGameById(long id) {
+        gameRepository.deleteGame(id);
+    }
+
+    @Transactional
+    public void updateGameById(long id, Game updateGame) {
+        gameRepository.updateGame(id, updateGame.getChatId(), updateGame.getFirstName(), updateGame.getWon(),
+                updateGame.getDraw(), updateGame.getLose());
     }
 }

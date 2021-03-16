@@ -44,6 +44,17 @@ public class MessageController {
         return ResponseEntity.ok(messages);
     }
 
+    @GetMapping("/chat/{chatId}")
+    ResponseEntity<List<Message>> getMessageByChatId(@PathVariable("chatId") long chatId) {
+        List<Message> list = messageService.getMessageByChatId(chatId);
+
+        if (list.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(list);
+    }
+
     @PostMapping()
     public ResponseEntity<Message> save(@RequestBody Message message) {
 
