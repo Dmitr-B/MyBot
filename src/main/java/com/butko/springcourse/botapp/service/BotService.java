@@ -1,6 +1,7 @@
 package com.butko.springcourse.botapp.service;
 
 import com.butko.springcourse.botapp.dto.GameResult;
+import com.butko.springcourse.botapp.dto.game.*;
 import com.butko.springcourse.botapp.dto.telegram.*;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -62,6 +63,9 @@ public class BotService {
 
         if (update.hasCallbackQuery()) {
             log.info("Callback post: " + update.getCallbackQuery());
+            /*GameContext gameContext = new GameContext();
+            gameContext.playGame(getOption("Random"));
+            log.info("Daattatata " + gameContext);*/
             String userChoice = getOption(update.getCallbackQuery().getData());
             String botChoice = getOption("Random");
             GameResult gameResult = playGame(userChoice, botChoice);

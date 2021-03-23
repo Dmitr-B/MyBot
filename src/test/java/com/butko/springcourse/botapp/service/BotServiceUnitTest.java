@@ -34,8 +34,8 @@ public class BotServiceUnitTest {
     @Mock
     private GameService gameService;
 
-    @Spy
-    final BotService spyBotService = new BotService(gameService, messageService);/* = spy(BotService.class);*/
+    /*@Spy
+    final BotService spyBotService = new BotService(gameService, messageService);*//* = spy(BotService.class);*/
 
     @Test
     void handleUpdate_whenHasNotMessage_thenDoNotSendMessage() {
