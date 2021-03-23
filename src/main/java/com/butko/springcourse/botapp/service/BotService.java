@@ -128,7 +128,7 @@ public class BotService {
                 //return gameContext.playGame(choice2);
                 /*log.info("Stone " + gameContext.getGameState());
                 log.info("Gameeeee " + gameContext.playGame(choice2));*/
-            //break;
+            break;
             case "Scissors":
                 gameContext.setGameState(new Scissors(gameContext));
                 //return
@@ -137,7 +137,7 @@ public class BotService {
             case "Paper":
                 gameContext.setGameState(new Paper(gameContext));
                 //log.info("Paper " + gameContext.getGameState());
-               // break;
+                break;
         }
         /*if (choice1.equals("Stone") && choice2.equals("Stone")) {
             return GameResult.DRAW;
