@@ -121,7 +121,25 @@ public class BotService {
     private GameResult playGame(String choice1, String choice2) {
         //todo можна зробити паттерн State
         //3 класа наслідуються від абстрактного і реалзують 3 методи stone, scissors, paper і повертають GameResult
-        if (choice1.equals("Stone") && choice2.equals("Stone")) {
+        GameContext gameContext = new GameContext();
+        switch (choice1){
+            case "Stone":
+                gameContext.setGameState(new Stone(gameContext));
+                //return gameContext.playGame(choice2);
+                /*log.info("Stone " + gameContext.getGameState());
+                log.info("Gameeeee " + gameContext.playGame(choice2));*/
+            //break;
+            case "Scissors":
+                gameContext.setGameState(new Scissors(gameContext));
+                //return
+                //log.info("Scissors " + gameContext.getGameState());
+                break;
+            case "Paper":
+                gameContext.setGameState(new Paper(gameContext));
+                //log.info("Paper " + gameContext.getGameState());
+               // break;
+        }
+        /*if (choice1.equals("Stone") && choice2.equals("Stone")) {
             return GameResult.DRAW;
         }
         if (choice1.equals("Stone") && choice2.equals("Scissors")) {
@@ -129,8 +147,8 @@ public class BotService {
         }
         if (choice1.equals("Stone") && choice2.equals("Paper")) {
             return GameResult.LOSE;
-        }
-        if (choice1.equals("Scissors") && choice2.equals("Stone")) {
+        }*/
+        /*if (choice1.equals("Scissors") && choice2.equals("Stone")) {
             return GameResult.LOSE;
         }
         if (choice1.equals("Scissors") && choice2.equals("Scissors")) {
@@ -147,8 +165,9 @@ public class BotService {
         }
         if (choice1.equals("Paper") && choice2.equals("Paper")) {
             return GameResult.DRAW;
-        }
-        return null;
+        }*/
+        //return null;
+        return gameContext.playGame(choice2);
     }
 
 }
