@@ -2,7 +2,7 @@ package com.butko.springcourse.botapp.dto.game;
 
 import com.butko.springcourse.botapp.dto.GameResult;
 
-public class Stone extends GameState{
+public class Stone extends GameStrategy{
 
     public Stone(GameContext gameContext) {
         super(gameContext);
@@ -10,7 +10,7 @@ public class Stone extends GameState{
 
     @Override
     GameResult playGame(String botData) {
-        gameContext.changeState(this);
+        gameContext.changeStrategy(this);
         switch (botData) {
             case "Stone":
                 return GameResult.DRAW;

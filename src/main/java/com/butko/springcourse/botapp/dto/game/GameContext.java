@@ -6,17 +6,17 @@ import lombok.ToString;
 @ToString
 public class GameContext{
 
-    private GameState gameState;
+    private GameStrategy gameStrategy;
 
-    public void setGameState(GameState gameState) {
-        this.gameState = gameState;
+    public void setGameStrategy(GameStrategy gameStrategy) {
+        this.gameStrategy = gameStrategy;
     }
 
-    public void changeState(GameState gameState) {
-        this.gameState = gameState;
+    public void changeStrategy(GameStrategy gameStrategy) {
+        this.gameStrategy = gameStrategy;
     }
 
     public GameResult playGame(String botData) {
-        return gameState.playGame(botData);
+        return gameStrategy.playGame(botData);
     }
 }

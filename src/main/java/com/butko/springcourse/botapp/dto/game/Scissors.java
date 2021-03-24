@@ -2,7 +2,7 @@ package com.butko.springcourse.botapp.dto.game;
 
 import com.butko.springcourse.botapp.dto.GameResult;
 
-public class Scissors extends GameState{
+public class Scissors extends GameStrategy{
 
     public Scissors(GameContext gameContext) {
         super(gameContext);
@@ -10,7 +10,7 @@ public class Scissors extends GameState{
 
     @Override
     GameResult playGame(String botData) {
-        gameContext.changeState(this);
+        gameContext.changeStrategy(this);
         switch (botData) {
             case "Stone":
                 return GameResult.LOSE;
