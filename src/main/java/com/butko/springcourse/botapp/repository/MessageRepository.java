@@ -15,6 +15,6 @@ public interface MessageRepository extends CrudRepository<Message, Long> {
 
     Optional<Message> findByMessageId(int messageId);
 
-    @Query("select m from Message m join Chat c on m.chat.id = c.id and c.id = ?1")
+    @Query("SELECT m FROM Message m JOIN Chat c ON m.chat.id = c.id AND c.id = ?1")
     List<Message> findMessageByChatId(long chatId);
 }
