@@ -1,6 +1,8 @@
 package com.butko.springcourse.botapp.service;
 
 import com.butko.springcourse.botapp.config.BotConfig;
+import com.butko.springcourse.botapp.dto.factory.MessageFactory;
+import com.butko.springcourse.botapp.dto.factory.SendMessageFactory;
 import com.butko.springcourse.botapp.dto.telegram.AnswerCallbackQuery;
 import com.butko.springcourse.botapp.dto.telegram.Keyboard;
 import com.butko.springcourse.botapp.dto.telegram.SendMessage;
@@ -25,14 +27,16 @@ public class MessageService {
     private final RestTemplate restTemplate;
     private final MessageRepository messageRepository;
     private final ChatRepository chatRepository;
+    private final MessageFactory messageFactory = new SendMessageFactory();
 
     public SendMessage sendMessage(Integer chatId, String text, Keyboard keyboard) {
-        SendMessage message = new SendMessage(chatId, text, keyboard);
+        //messageFactory.createMessage(chatId, text, keyboard);
+        //SendMessage message = new SendMessage(chatId, text, keyboard);
 
         restTemplate.postForObject(botConfig.getDomain() + botConfig.getToken() + "/sendMessage",
-                message, SendMessage.class);
+                messageFactory.createMessage(chatId, text, keyboard), SendMessage.class);
 
-        return message;
+        return messageFactory.createMessage(chatId, text, keyboard);
     }
 
     public void answerCallbackQuery(String id, String text) {

@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class SendMessage{
+public class SendMessage {
 
     @JsonProperty("chat_id")
     private Integer chatId;

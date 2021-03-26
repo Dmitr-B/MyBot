@@ -1,9 +1,11 @@
 package com.butko.springcourse.botapp.service;
 
 import com.butko.springcourse.botapp.dto.GameResult;
-import com.butko.springcourse.botapp.dto.game.*;
+import com.butko.springcourse.botapp.dto.game.GameContext;
+import com.butko.springcourse.botapp.dto.game.Paper;
+import com.butko.springcourse.botapp.dto.game.Scissors;
+import com.butko.springcourse.botapp.dto.game.Stone;
 import com.butko.springcourse.botapp.dto.telegram.*;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -33,10 +35,10 @@ public class BotService {
                     messageService.sendMessage(update.getMessage().getChat().getId(),
                             gameService.showStat(update.getMessage().getChat().getId()),createReplyMarkup());
                     break;
-/*                default:
+                default:
                     messageService.sendMessage(update.getMessage().getChat().getId(),
                             "Я пока что не могу отвечать на все сообщения. Давай играть", createReplyMarkup());
-                    break;*/
+                    break;
             }
         }
     }
@@ -116,11 +118,8 @@ public class BotService {
     }
 
     private GameResult playGame(String choice1, String choice2) {
-
-
-        //todo можна зробити паттерн State
-        //3 класа наслідуються від абстрактного і реалзують 3 методи stone, scissors, paper і повертають GameResult
         GameContext gameContext = new GameContext();
+
         switch (choice1){
             case "Stone":
                 gameContext.setGameStrategy(new Stone(gameContext));
@@ -132,6 +131,7 @@ public class BotService {
                 gameContext.setGameStrategy(new Paper(gameContext));
                 break;
         }
+
         return gameContext.playGame(choice2);
     }
 }
