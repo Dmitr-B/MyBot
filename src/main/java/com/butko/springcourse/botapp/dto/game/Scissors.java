@@ -4,13 +4,8 @@ import com.butko.springcourse.botapp.dto.GameResult;
 
 public class Scissors extends GameStrategy{
 
-    public Scissors(GameContext gameContext) {
-        super(gameContext);
-    }
-
     @Override
     GameResult playGame(String botData) {
-        gameContext.changeStrategy(this);
         switch (botData) {
             case "Stone":
                 return GameResult.LOSE;

@@ -12,10 +12,6 @@ public class GameContext{
         this.gameStrategy = gameStrategy;
     }
 
-    public void changeStrategy(GameStrategy gameStrategy) {
-        this.gameStrategy = gameStrategy;
-    }
-
     public GameResult playGame(String botData) {
         return gameStrategy.playGame(botData);
     }

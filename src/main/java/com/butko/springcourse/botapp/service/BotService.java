@@ -122,13 +122,13 @@ public class BotService {
 
         switch (choice1){
             case "Stone":
-                gameContext.setGameStrategy(new Stone(gameContext));
+                gameContext.setGameStrategy(new Stone());
             break;
             case "Scissors":
-                gameContext.setGameStrategy(new Scissors(gameContext));
+                gameContext.setGameStrategy(new Scissors());
                 break;
             case "Paper":
-                gameContext.setGameStrategy(new Paper(gameContext));
+                gameContext.setGameStrategy(new Paper());
                 break;
         }
 
